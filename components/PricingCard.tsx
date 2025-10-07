@@ -53,7 +53,7 @@ export default function PricingCard({
       transition={{ duration: 0.3 }}
     >
       {badge && (
-        <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
           <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold bg-gradient-to-r from-[var(--brand)] via-[var(--accent-purple)] to-[var(--accent-pink)] text-white shadow-lg animate-pulse-glow whitespace-nowrap">
             {badge}
           </span>
