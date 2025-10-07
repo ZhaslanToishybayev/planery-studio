@@ -3,9 +3,8 @@ import { motion } from "framer-motion";
 
 const badges = [
   { text: "Для Notion", icon: "📓" },
-  { text: "На русском", icon: "🇷🇺" },
+  { text: "500+ покупателей", icon: "⭐" },
   { text: "Пожизненный доступ", icon: "♾️" },
-  { text: "500+ пользователей", icon: "⭐" },
 ];
 
 export default function HeroBadges() {

@@ -9,7 +9,7 @@ export default function StructuredData() {
       "Эстетичные Notion-шаблоны для продуктивности и учёбы",
     contactPoint: {
       "@type": "ContactPoint",
-      email: "support@planery.studio",
+      url: "https://t.me/planery_studio",
       contactType: "Customer Service",
       availableLanguage: ["Russian"],
     },

@@ -126,7 +126,7 @@ export const productivityPlanner: Product = {
     "Видео-инструкция по настройке (15 мин)",
     "PDF-гайд «Как использовать систему»",
     "Пожизненные бесплатные обновления",
-    "Email поддержка в течение 30 дней"
+    "Telegram поддержка"
   ],
   
   requirements: "Бесплатный аккаунт Notion (Personal plan). Работает на всех платформах: Web, Desktop (Windows/Mac/Linux), Mobile (iOS/Android). Интернет для синхронизации.",

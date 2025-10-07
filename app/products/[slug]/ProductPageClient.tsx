@@ -96,7 +96,7 @@ export default function ProductPageClient({
               Купить за {product.price.toLocaleString()} ₸
             </button>
             <div className="mt-6 text-sm text-gray-600">
-              ✓ Моментальная доставка • ✓ Гарантия 30 дней • ✓ Пожизненный доступ
+              ✓ Моментальная доставка • ✓ Для Notion • ✓ Пожизненный доступ
             </div>
           </div>
         </section>

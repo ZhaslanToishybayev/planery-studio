@@ -128,13 +128,7 @@ export default function Page() {
                 <span className="text-accent">Более 500 пользователей</span> уже повысили свою продуктивность.
               </p>
               <div className="flex gap-3 flex-wrap">
-                <a href="#pricing" className="btn text-lg px-8 h-14">Выбрать план</a>
-                <button 
-                  onClick={() => setIsQuizOpen(true)}
-                  className="btn-secondary text-base px-6 h-14"
-                >
-                  🎯 Помочь выбрать
-                </button>
+                <a href="#pricing" className="btn text-lg px-8 h-14">Смотреть планеры</a>
               </div>
               <div className="mt-8 pt-8 border-t border-gray-100">
                 <SocialProof />
@@ -203,7 +197,12 @@ export default function Page() {
             <div className="mb-6">
               <ProductFeatures features={productivityFeatures} title="Что включено" />
             </div>
-            <a href="#pricing" className="btn">Смотреть цены</a>
+            <button 
+              onClick={() => handleBuyClick("Набор продуктивности", "4 990 ₸")}
+              className="btn"
+            >
+              Оплатить - <span className="font-bold">4 990₸</span> <span className="line-through text-gray-400">10 000₸</span>
+            </button>
           </div>
         </div>
       </section>
@@ -239,7 +238,12 @@ export default function Page() {
             <div className="mb-6">
               <ProductFeatures features={studentFeatures} title="Что включено" />
             </div>
-            <a href="#pricing" className="btn">Смотреть цены</a>
+            <button 
+              onClick={() => handleBuyClick("Дэшборд студента", "3 490 ₸")}
+              className="btn"
+            >
+              Оплатить - <span className="font-bold">3 490₸</span> <span className="line-through text-gray-400">7 000₸</span>
+            </button>
           </div>
           <div className="relative">
             <AngledStack
@@ -278,11 +282,8 @@ export default function Page() {
           <AnimatedSection animation="fadeUp" delay={0.4}>
             <div className="text-center mt-12">
               <a href="#pricing" className="btn-success text-lg px-8 h-14">
-                Попробовать бесплатно 30 дней
+                Смотреть планеры
               </a>
-              <p className="mt-4 text-sm text-gray-500">
-                Гарантия возврата денег, если не подойдёт
-              </p>
             </div>
           </AnimatedSection>
         </div>
@@ -297,7 +298,7 @@ export default function Page() {
           <AnimatedSection animation="fadeUp">
             <div className="text-center mb-12">
               <h2 className="display-md mb-4">
-                Выберите <span className="gradient-text-hero">подходящий план</span>
+                <span className="gradient-text-hero">Наши продукты</span>
               </h2>
               <p className="body-lg text-gray-600">
                 Разовый платёж. Пожизненный доступ. Все обновления бесплатно.
@@ -312,8 +313,9 @@ export default function Page() {
 
           <div className="grid md:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-16 px-2 md:px-0">
             <PricingCard
-              title="Продуктивность"
+              title="Набор продуктивности"
               price="4 990 ₸"
+              originalPrice="10 000 ₸"
               description="Полный набор для управления задачами и проектами"
               features={[
                 "База задач с умными фильтрами",
@@ -324,7 +326,7 @@ export default function Page() {
                 "Пожизненные обновления",
               ]}
               onBuyClick={() => handleBuyClick("Набор продуктивности", "4 990 ₸")}
-              buttonText="Купить"
+              buttonText="Оплатить"
             />
 
             <PricingCard
@@ -344,12 +346,13 @@ export default function Page() {
               isPopular={true}
               badge="🔥 Выгоднее на 30%"
               onBuyClick={() => handleBuyClick("Полный набор", "6 990 ₸")}
-              buttonText="Купить со скидкой"
+              buttonText="Оплатить со скидкой"
             />
 
             <PricingCard
-              title="Для студента"
+              title="Дэшборд студента"
               price="3 490 ₸"
+              originalPrice="7 000 ₸"
               description="Идеально для учёбы в университете или школе"
               features={[
                 "Расписание занятий",
@@ -360,7 +363,7 @@ export default function Page() {
                 "Пожизненные обновления",
               ]}
               onBuyClick={() => handleBuyClick("Дэшборд студента", "3 490 ₸")}
-              buttonText="Купить"
+              buttonText="Оплатить"
             />
           </div>
 
@@ -368,14 +371,7 @@ export default function Page() {
             <TrustBadges />
           </div>
 
-          {/* Comparison Table */}
-          <div className="mt-16">
-            <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold mb-2">Детальное сравнение планов</h3>
-              <p className="text-gray-600">Выберите план, который подходит именно вам</p>
-            </div>
-            <ComparisonTable />
-          </div>
+
         </div>
       </section>
 
@@ -441,7 +437,7 @@ export default function Page() {
               Присоединяйтесь к 500+ пользователям, которые уже повысили свою продуктивность
             </p>
             <a href="#pricing" className="btn text-lg px-8 h-14 inline-flex items-center gap-2">
-              <span>Выбрать план</span>
+              <span>Выбрать планер</span>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -457,7 +453,7 @@ export default function Page() {
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Гарантия возврата 30 дней
+                Пожизненные обновления
               </span>
               <span className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

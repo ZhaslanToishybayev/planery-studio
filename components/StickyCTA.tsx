@@ -49,7 +49,7 @@ export default function StickyCTA() {
                   console.log("Sticky CTA clicked");
                 }}
               >
-                Выбрать план
+                Выбрать планер
               </a>
             </div>
           </div>

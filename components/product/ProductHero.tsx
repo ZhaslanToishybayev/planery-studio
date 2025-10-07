@@ -130,7 +130,7 @@ export default function ProductHero({ product, onBuyClick }: ProductHeroProps) {
             <div className="mt-8 pt-8 border-t border-gray-200 grid grid-cols-3 gap-4 text-center text-sm text-gray-600">
               <div>
                 <div className="text-2xl mb-1">✓</div>
-                <div>Гарантия 30 дней</div>
+                <div>Для Notion</div>
               </div>
               <div>
                 <div className="text-2xl mb-1">⚡</div>
