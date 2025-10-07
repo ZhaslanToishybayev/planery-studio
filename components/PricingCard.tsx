@@ -39,7 +39,7 @@ export default function PricingCard({
         boxShadow: isPopular 
           ? "0 0 40px rgba(0, 110, 173, 0.2), 0 0 80px rgba(124, 58, 237, 0.1)" 
           : undefined,
-        marginTop: badge ? "2rem" : undefined,
+        marginTop: badge ? "2.5rem" : undefined,
       }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -53,7 +53,7 @@ export default function PricingCard({
       transition={{ duration: 0.3 }}
     >
       {badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-10">
           <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold bg-gradient-to-r from-[var(--brand)] via-[var(--accent-purple)] to-[var(--accent-pink)] text-white shadow-lg animate-pulse-glow whitespace-nowrap">
             {badge}
           </span>
