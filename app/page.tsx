@@ -199,7 +199,7 @@ export default function Page() {
               onClick={() => handleBuyClick("Набор продуктивности", "4 990 ₸")}
               className="btn"
             >
-              Оплатить <span className="font-bold">4 990₸</span> <span className="line-through text-gray-400 ml-2">10 000₸</span>
+              Оплатить <span className="font-bold ml-1">4 990₸</span> <span className="line-through text-gray-400 ml-2">10 000₸</span>
             </button>
           </div>
         </div>
@@ -240,7 +240,7 @@ export default function Page() {
               onClick={() => handleBuyClick("Дэшборд студента", "3 490 ₸")}
               className="btn"
             >
-              Оплатить <span className="font-bold">3 490₸</span> <span className="line-through text-gray-400 ml-2">7 000₸</span>
+              Оплатить <span className="font-bold ml-1">3 490₸</span> <span className="line-through text-gray-400 ml-2">7 000₸</span>
             </button>
           </div>
           <div className="relative">
