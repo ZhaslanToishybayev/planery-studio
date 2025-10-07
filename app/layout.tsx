@@ -1,8 +1,12 @@
 import "./../styles/globals.css";
-import { Inter } from "next/font/google";
+import { Nunito_Sans } from "next/font/google";
 import type { Metadata } from "next";
 
-const inter = Inter({ subsets: ["latin", "cyrillic"], display: "swap" });
+const nunitoSans = Nunito_Sans({ 
+  subsets: ["latin", "cyrillic"],
+  weight: ['400', '500', '600', '700', '800'],
+  display: "swap" 
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://planery.studio"),
@@ -75,7 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <StructuredData />
       </head>
-      <body className={inter.className + " min-h-screen antialiased"}>{children}</body>
+      <body className={nunitoSans.className + " min-h-screen antialiased"}>{children}</body>
     </html>
   );
 }

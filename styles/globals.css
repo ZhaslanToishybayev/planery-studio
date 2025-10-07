@@ -87,6 +87,8 @@ body {
   font-feature-settings: "liga" 1, "kern" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
 }
 
 .container-1200 {
@@ -144,13 +146,15 @@ body {
 }
 
 .heading {
-  @apply text-3xl md:text-4xl lg:text-[40px] font-bold leading-tight tracking-tight;
+  @apply text-3xl md:text-4xl lg:text-[40px] font-bold leading-tight;
   text-wrap: balance;
+  letter-spacing: -0.02em;
 }
 
 .subheading {
   @apply text-base md:text-lg text-gray-600 leading-relaxed;
   text-wrap: pretty;
+  letter-spacing: -0.01em;
 }
 
 .body-lg {
