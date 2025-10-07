@@ -1,22 +1,23 @@
 "use client";
 import { useEffect, useState } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function ScrollProgress() {
   const [isVisible, setIsVisible] = useState(false);
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsVisible(window.scrollY > 100);
+      
+      // Calculate scroll progress
+      const windowHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrolled = (window.scrollY / windowHeight) * 100;
+      setScrollProgress(Math.min(scrolled, 100));
     };
     
     window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Initial calculation
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -27,9 +28,9 @@ export default function ScrollProgress() {
   return (
     <>
       {/* Progress Bar */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--brand)] to-[var(--brand-light)] origin-left z-[100]"
-        style={{ scaleX }}
+      <div
+        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-[var(--brand)] to-[var(--brand-light)] z-[100] transition-none"
+        style={{ width: `${scrollProgress}%` }}
       />
 
       {/* Scroll to Top Button */}

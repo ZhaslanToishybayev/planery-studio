@@ -478,3 +478,66 @@ textarea:focus-visible {
     animation: none !important;
   }
 }
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  /* Better spacing on mobile */
+  .container-1200 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Hero section mobile */
+  .display-lg {
+    font-size: clamp(2rem, 8vw, 2.5rem);
+    line-height: 1.2;
+  }
+
+  /* Better button sizing */
+  .btn {
+    min-height: 48px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    font-size: 1rem;
+  }
+
+  /* Improved text readability */
+  .body-lg {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  /* Better heading hierarchy */
+  .heading {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+
+  .subheading {
+    font-size: 0.95rem;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 375px) {
+  .display-lg {
+    font-size: 1.75rem;
+  }
+
+  .btn {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .display-lg {
+    font-size: 3rem;
+  }
+
+  .container-1200 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}

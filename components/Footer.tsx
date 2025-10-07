@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -26,9 +27,8 @@ export default function Footer() {
   ];
 
   const footerLinks = [
-    { name: "Политика конфиденциальности", href: "#" },
-    { name: "Условия использования", href: "#" },
-    { name: "Контакты", href: "https://t.me/planery_studio" },
+    { name: "Политика конфиденциальности", href: "/privacy" },
+    { name: "Договор оферты", href: "/terms" },
   ];
 
   return (
@@ -38,9 +38,13 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-[var(--brand)]/10 flex items-center justify-center">
-                <span className="text-[var(--brand)] font-semibold">PS</span>
-              </div>
+              <Image 
+                src="/assets/planery-logo.png" 
+                alt="Planery Studio" 
+                width={40} 
+                height={40}
+                className="w-10 h-10 object-contain"
+              />
               <div className="font-semibold text-gray-900">Planery Studio</div>
             </div>
             <p className="text-sm text-gray-600 mb-4">

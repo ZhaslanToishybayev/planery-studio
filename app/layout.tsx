@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 const nunitoSans = Nunito_Sans({ 
   subsets: ["latin", "cyrillic"],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['400', '500', '600', '700', '800', '900'],
   display: "swap" 
 });
 
@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   title: {
     default: "Planery Studio — Цифровые планеры для Notion | Готовые шаблоны",
     template: "%s | Planery Studio",
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/assets/planery-logo.png',
   },
   description:
     "Эстетичные Notion-шаблоны для продуктивности и учёбы. ✅ Более 500 покупателей ✅ Пожизненный доступ ✅ Для Notion. Начните организовывать жизнь за 5 минут!",

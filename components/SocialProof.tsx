@@ -4,14 +4,13 @@ import AnimatedCounter from "./AnimatedCounter";
 
 const stats = [
   { value: 500, suffix: "+", label: "Довольных клиентов", type: "counter" },
-  { value: "4.9", label: "Средний рейтинг", type: "text" },
   { value: 10, suffix: "+", label: "Готовых шаблонов", type: "counter" },
   { value: 300, suffix: "%", label: "Эффективности", type: "counter" },
 ];
 
 export default function SocialProof() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div className="grid grid-cols-3 gap-8">
       {stats.map((stat, index) => (
         <motion.div
           key={index}

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import Logo from "./Logo";
+import Image from "next/image";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -12,25 +12,22 @@ export default function Header() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
+    
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { href: "#productivity", label: "Продуктивность" },
-    { href: "#student", label: "Учёба" },
-    { href: "#pricing", label: "Цены" },
-    { href: "#faq", label: "FAQ" },
-  ];
+
 
   return (
     <>
       <motion.header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all ${
+        className={`fixed top-0 left-0 right-0 z-50 ${
           isScrolled
             ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100"
             : "bg-white border-b border-gray-100"
         }`}
+        style={{ transition: 'background-color 0.3s, box-shadow 0.3s' }}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.3 }}
@@ -38,7 +35,13 @@ export default function Header() {
         <div className="container-1200 py-4 flex items-center justify-between">
           <a href="#" className="flex items-center gap-3 hover:opacity-80 transition group">
             <div className="transform transition-transform group-hover:scale-110">
-              <Logo className="w-10 h-10" />
+              <Image 
+                src="/assets/planery-logo.png" 
+                alt="Planery Studio" 
+                width={40} 
+                height={40}
+                className="w-10 h-10 object-contain"
+              />
             </div>
             <div>
               <div className="text-base font-bold text-gray-900">Planery Studio</div>
@@ -46,18 +49,10 @@ export default function Header() {
             </div>
           </a>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="hover:text-[var(--brand)] transition"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
+          {/* Slogan */}
+          <div className="hidden md:block text-xl text-gray-700 font-bold">
+            Преврати хаос в порядок
+          </div>
 
           <div className="flex items-center gap-3">
             <Link
@@ -98,14 +93,6 @@ export default function Header() {
             </button>
           </div>
         </div>
-
-        {/* Progress Bar */}
-        {isScrolled && typeof window !== 'undefined' && (
-          <motion.div
-            className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-[var(--brand)] to-blue-500"
-            style={{ width: `${Math.min((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100, 100)}%` }}
-          />
-        )}
       </motion.header>
 
       {/* Mobile Menu */}
@@ -127,19 +114,12 @@ export default function Header() {
               transition={{ duration: 0.2 }}
             >
               <nav className="container-1200 py-6 flex flex-col gap-4">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    className="text-lg font-medium text-gray-700 hover:text-[var(--brand)] transition py-2"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </a>
-                ))}
+                <div className="text-xl text-gray-700 font-bold py-2">
+                  Преврати хаос в порядок
+                </div>
                 <Link
                   href="#pricing"
-                  className="btn mt-2"
+                  className="btn"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Купить
