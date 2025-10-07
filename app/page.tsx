@@ -12,8 +12,7 @@ import FAQAccordion from "@/components/FAQAccordion";
 import Footer from "@/components/Footer";
 import FloatingElement from "@/components/FloatingElement";
 import ScrollProgress from "@/components/ScrollProgress";
-import LiveStats from "@/components/LiveStats";
-import LeadMagnetPopup from "@/components/LeadMagnetPopup";
+
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import ComparisonTable from "@/components/ComparisonTable";
 import StickyCTA from "@/components/StickyCTA";
@@ -117,7 +116,6 @@ export default function Page() {
             <AnimatedSection animation="fadeLeft">
               <div className="mb-6 flex flex-wrap gap-3">
                 <HeroBadges />
-                <LiveStats />
               </div>
               <h1 className="display-lg mb-4">
                 Перестаньте тратить время на настройку.{" "}
@@ -485,8 +483,7 @@ export default function Page() {
       {/* Sticky CTA */}
       <StickyCTA />
 
-      {/* Lead Magnet Popup */}
-      <LeadMagnetPopup />
+
 
       {/* Cookie Consent */}
       <CookieConsent />
