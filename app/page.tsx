@@ -393,7 +393,7 @@ export default function Page() {
                   Ответим на все вопросы и поможем с настройкой шаблонов
                 </p>
                 <a 
-                  href="https://t.me/your_support_bot" 
+                  href="https://t.me/planery_studio" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"

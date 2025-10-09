@@ -14,7 +14,7 @@ export default function StructuredData() {
       availableLanguage: ["Russian"],
     },
     sameAs: [
-      "https://instagram.com/planery.studio",
+      "https://www.instagram.com/planerystudio/",
       "https://t.me/planery_studio",
     ],
   };
