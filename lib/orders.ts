@@ -14,6 +14,14 @@ export interface Order {
 // Для демонстрации используем простой массив
 const orders: Order[] = [];
 
+interface PendingInvoice {
+  email: string;
+  productSlug?: string;
+  name?: string;
+}
+
+const pendingInvoices = new Map<number, PendingInvoice>();
+
 export function createOrder(
   email: string,
   productId: string,
@@ -54,6 +62,18 @@ export function updateOrderStatus(id: string, status: Order['status']): boolean 
 
 export function getOrdersByEmail(email: string): Order[] {
   return orders.filter(order => order.email === email);
+}
+
+export function saveInvoice(id: number, payload: PendingInvoice) {
+  pendingInvoices.set(id, payload);
+}
+
+export function consumeInvoice(id: number): PendingInvoice | undefined {
+  const invoice = pendingInvoices.get(id);
+  if (invoice) {
+    pendingInvoices.delete(id);
+  }
+  return invoice;
 }
 
 function generateOrderId(): string {
