@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { AnimatedCheckmark } from '@/components/AnimatedCheckmark';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function CheckoutSuccessPage() {
@@ -22,8 +20,12 @@ export default function CheckoutSuccessPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
-        <div className="mb-6">
-          <AnimatedCheckmark />
+        <div className="mb-6 flex justify-center">
+          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
         </div>
         
         <h1 className="text-3xl font-bold text-gray-900 mb-4">
@@ -56,11 +58,12 @@ export default function CheckoutSuccessPage() {
             Информация о доступе к шаблонам будет отправлена на ваш email в течение 5-10 минут.
           </p>
           
-          <Button asChild className="w-full">
-            <Link href="/">
-              Вернуться на главную
-            </Link>
-          </Button>
+          <Link 
+            href="/"
+            className="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Вернуться на главную
+          </Link>
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-200">
