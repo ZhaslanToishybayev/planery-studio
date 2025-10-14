@@ -1,31 +1,41 @@
-'use client';
+"use client";
 
-import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import AnimatedCheckmark from "@/components/AnimatedCheckmark";
+import Link from "next/link";
 
-function CheckoutSuccessContent() {
-  const searchParams = useSearchParams();
+export default function CheckoutSuccessPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [amount, setAmount] = useState<string | null>(null);
 
+  const formatAmount = (value: string | null) => {
+    if (!value) return null;
+    const normalized = Number.parseFloat(value.replace(",", "."));
+    if (Number.isNaN(normalized)) {
+      return value;
+    }
+    return new Intl.NumberFormat("ru-RU", {
+      style: "currency",
+      currency: "KZT",
+      minimumFractionDigits: 2,
+    }).format(normalized);
+  };
+
   useEffect(() => {
-    const invId = searchParams.get('InvId');
-    const outSum = searchParams.get('OutSum');
-    
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const invId = params.get("InvId");
+    const outSum = params.get("OutSum");
+
     if (invId) setOrderId(invId);
     if (outSum) setAmount(outSum);
-  }, [searchParams]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
-        <div className="mb-6 flex justify-center">
-          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
+        <div className="mb-6">
+          <AnimatedCheckmark />
         </div>
         
         <h1 className="text-3xl font-bold text-gray-900 mb-4">
@@ -46,7 +56,7 @@ function CheckoutSuccessContent() {
               <>
                 <p className="text-sm text-gray-500 mt-2 mb-1">Сумма:</p>
                 <p className="font-semibold text-green-600">
-                  {amount} ₽
+                  {formatAmount(amount)}
                 </p>
               </>
             )}
@@ -57,11 +67,8 @@ function CheckoutSuccessContent() {
           <p className="text-sm text-gray-600">
             Информация о доступе к шаблонам будет отправлена на ваш email в течение 5-10 минут.
           </p>
-          
-          <Link 
-            href="/"
-            className="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-          >
+
+          <Link href="/" className="btn w-full">
             Вернуться на главную
           </Link>
         </div>
@@ -73,20 +80,5 @@ function CheckoutSuccessContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function CheckoutSuccessPage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Загрузка...</p>
-        </div>
-      </div>
-    }>
-      <CheckoutSuccessContent />
-    </Suspense>
   );
 }
