@@ -1,9 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { XCircle } from 'lucide-react';
 
 export default function CheckoutFailPage() {
   const searchParams = useSearchParams();
@@ -29,7 +27,11 @@ export default function CheckoutFailPage() {
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
         <div className="mb-6 flex justify-center">
-          <XCircle className="w-16 h-16 text-red-500" />
+          <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
         </div>
         
         <h1 className="text-3xl font-bold text-gray-900 mb-4">
@@ -48,17 +50,19 @@ export default function CheckoutFailPage() {
           </p>
           
           <div className="space-y-3">
-            <Button asChild className="w-full">
-              <Link href="/">
-                Попробовать снова
-              </Link>
-            </Button>
+            <Link 
+              href="/"
+              className="block w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              Попробовать снова
+            </Link>
             
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/products">
-                Выбрать другой шаблон
-              </Link>
-            </Button>
+            <Link 
+              href="/products"
+              className="block w-full border border-gray-300 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+            >
+              Выбрать другой шаблон
+            </Link>
           </div>
         </div>
 
