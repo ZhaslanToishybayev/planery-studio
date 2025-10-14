@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     const signature = body.get('SignatureValue');
 
     if (!outSum || !invId || !signature) {
-      return NextResponse.text('ERROR: Missing parameters', { status: 400 });
+      return new Response('ERROR: Missing parameters', { status: 400 });
     }
 
     // Verify signature
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     if (calculatedSignature.toLowerCase() !== signature.toString().toLowerCase()) {
       console.error('Signature verification failed');
-      return NextResponse.text('ERROR: Invalid signature', { status: 400 });
+      return new Response('ERROR: Invalid signature', { status: 400 });
     }
 
     // Here you would typically:
@@ -32,10 +32,10 @@ export async function POST(request: NextRequest) {
     console.log(`Payment received: ${outSum} for order ${invId}`);
 
     // Return OK to Robokassa
-    return NextResponse.text(`OK${invId}`);
+    return new Response(`OK${invId}`);
 
   } catch (error) {
     console.error('Payment result error:', error);
-    return NextResponse.text('ERROR: Internal server error', { status: 500 });
+    return new Response('ERROR: Internal server error', { status: 500 });
   }
 }
