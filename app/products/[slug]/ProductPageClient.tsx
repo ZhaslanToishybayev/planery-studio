@@ -116,6 +116,7 @@ export default function ProductPageClient({
         onClose={() => setIsCheckoutOpen(false)}
         productTitle={product.name}
         productPrice={`${product.price.toLocaleString()} ₸`}
+        productSlug={product.slug}
       />
     </>
   );

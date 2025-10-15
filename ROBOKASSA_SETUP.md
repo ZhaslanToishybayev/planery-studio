@@ -52,13 +52,22 @@ Fail URL: https://ваш-домен.com/checkout/fail
 
 ### 4. Переменные окружения
 
-Добавьте в `.env.local`:
+Добавьте в `.env.local` (пример для тестовой среды):
 
 ```env
-ROBOKASSA_MERCHANT_ID=ваш_merchant_id
-ROBOKASSA_PASSWORD_1=ваш_пароль_1
-ROBOKASSA_PASSWORD_2=ваш_пароль_2
-ROBOKASSA_TEST_MODE=true
+ROBOKASSA_LOGIN=ваш_merchant_id
+ROBOKASSA_PASSWORD1=ваш_пароль_1
+ROBOKASSA_PASSWORD2=ваш_пароль_2
+ROBOKASSA_PAYMENT_URL=https://auth.robokassa.kz/Merchant/Index.aspx
+ROBOKASSA_TEST_MODE=1
+ROBOKASSA_ENABLE_RECEIPT=1
+ROBOKASSA_DISABLE_REDIRECT=0
+ROBOKASSA_CURRENCY=KZT
+
+EMAIL_SERVICE_API_KEY=ваш_resend_api_key
+EMAIL_FROM='Planery Studio <support@planery.studio>'
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=ваш_service_key
 ```
 
 ### 5. Настройка Vercel
@@ -66,11 +75,67 @@ ROBOKASSA_TEST_MODE=true
 В Vercel Dashboard → Settings → Environment Variables:
 
 ```
-ROBOKASSA_MERCHANT_ID=ваш_merchant_id
-ROBOKASSA_PASSWORD_1=ваш_пароль_1
-ROBOKASSA_PASSWORD_2=ваш_пароль_2
-ROBOKASSA_TEST_MODE=false
+ROBOKASSA_LOGIN=ваш_merchant_id
+ROBOKASSA_PASSWORD1=ваш_пароль_1
+ROBOKASSA_PASSWORD2=ваш_пароль_2
+ROBOKASSA_PAYMENT_URL=https://auth.robokassa.kz/Merchant/Index.aspx
+ROBOKASSA_TEST_MODE=0
+ROBOKASSA_ENABLE_RECEIPT=1
+ROBOKASSA_DISABLE_REDIRECT=0
+ROBOKASSA_CURRENCY=KZT
+
+EMAIL_SERVICE_API_KEY=боевой_resend_api_key
+EMAIL_FROM='Planery Studio <support@planery.studio>'
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=боевой_service_key
 ```
+
+### 6. Создание таблиц в Supabase
+
+В панели Supabase откройте **SQL Editor** и выполните запрос:
+
+```sql
+create extension if not exists "uuid-ossp";
+
+create table if not exists orders (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  paid_at timestamptz,
+  email text not null,
+  customer_name text,
+  product_slug text not null,
+  product_name text not null,
+  amount integer not null,
+  currency text not null default 'KZT',
+  invoice_id integer not null unique,
+  checksum text,
+  status text not null default 'PENDING'
+);
+
+create or replace function set_orders_updated_at()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
+
+drop trigger if exists trg_orders_updated_at on orders;
+create trigger trg_orders_updated_at
+before update on orders
+for each row execute function set_orders_updated_at();
+
+create table if not exists order_events (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid references orders(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  type text not null,
+  payload jsonb not null
+);
+```
+
+> ⚠️ Service role ключ (`SUPABASE_SERVICE_ROLE_KEY`) — секрет. Храните его только в серверных переменных окружения и не отдавайте на клиент.
 
 ## Процесс работы
 
@@ -81,10 +146,9 @@ const response = await fetch('/api/robokassa/create', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    amount: 1000, // сумма в рублях
-    description: 'Планировщик студента',
-    orderId: 'ORD-12345',
-    email: 'user@example.com'
+    productSlug: 'productivity', // slug из data/products.ts
+    email: 'user@example.com',
+    name: 'Имя покупателя'
   })
 });
 
@@ -122,10 +186,9 @@ Robokassa автоматически отправляет POST запрос на
 curl -X POST http://localhost:3000/api/robokassa/create \
   -H "Content-Type: application/json" \
   -d '{
-    "amount": 1000,
-    "description": "Test payment",
-    "orderId": "TEST-001",
-    "email": "test@example.com"
+    "productSlug": "productivity",
+    "email": "test@example.com",
+    "name": "Test User"
   }'
 ```
 
@@ -136,7 +199,7 @@ curl -X POST http://localhost:3000/api/robokassa/create \
 Все запросы от Robokassa проверяются по подписи:
 
 ```javascript
-const signatureString = `${outSum}:${invId}:${ROBOKASSA_PASSWORD_2}`;
+const signatureString = `${outSum}:${invId}:${ROBOKASSA_PASSWORD2}`;
 const calculatedSignature = crypto.createHash('md5').update(signatureString).digest('hex');
 ```
 
@@ -165,22 +228,22 @@ console.error('Signature verification failed');
 
 ### Отслеживание статусов
 
-- `pending` - заказ создан, ожидает оплаты
-- `paid` - заказ оплачен успешно
-- `failed` - ошибка оплаты
-- `cancelled` - отменен пользователем
+- `PENDING` — заказ создан, ожидает оплаты
+- `PAID` — заказ оплачен успешно
+- `FAILED` — ошибка оплаты или отмена
+- `CANCELLED` — отменен вручную
 
 ## Troubleshooting
 
 ### Ошибка "Invalid signature"
 
-1. Проверьте правильность `ROBOKASSA_PASSWORD_2`
+1. Проверьте правильность `ROBOKASSA_PASSWORD2`
 2. Убедитесь, что параметры передаются в правильном порядке
 3. Проверьте кодировку (должна быть UTF-8)
 
 ### Платеж не проходит
 
-1. Проверьте `ROBOKASSA_MERCHANT_ID`
+1. Проверьте `ROBOKASSA_LOGIN`
 2. Убедитесь, что аккаунт активирован в Robokassa
 3. Проверьте настройки URL'ов
 
@@ -207,7 +270,7 @@ Robokassa поддерживает:
 ```javascript
 // Пример запроса возврата
 const refundData = {
-  MerchantLogin: ROBOKASSA_MERCHANT_ID,
+  MerchantLogin: ROBOKASSA_LOGIN,
   TransactionID: transactionId,
   OutSum: amount,
   // ... другие параметры

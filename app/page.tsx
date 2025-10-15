@@ -22,14 +22,23 @@ export default function Page() {
   const [selectedProduct, setSelectedProduct] = useState({
     title: "",
     price: "",
+    slug: "",
   });
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const handleBuyClick = (title: string, price: string) => {
-    setSelectedProduct({ title, price });
+  const handleBuyClick = ({
+    title,
+    price,
+    slug,
+  }: {
+    title: string;
+    price: string;
+    slug: string;
+  }) => {
+    setSelectedProduct({ title, price, slug });
     setIsCheckoutOpen(true);
   };
 
@@ -227,7 +236,13 @@ export default function Page() {
                 <ProductFeatures features={productivityFeatures} title="Что включено" />
               </div>
               <button 
-                onClick={() => handleBuyClick("Набор продуктивности", "4 990 ₸")}
+                onClick={() =>
+                  handleBuyClick({
+                    title: "Набор продуктивности",
+                    price: "4 990 ₸",
+                    slug: "productivity",
+                  })
+                }
                 className="btn"
               >
                 Оплатить <span className="font-bold ml-1">4 990₸</span> <span className="line-through text-gray-400 ml-2">10 000₸</span>
@@ -268,7 +283,13 @@ export default function Page() {
                 <ProductFeatures features={studentFeatures} title="Что включено" />
               </div>
               <button 
-                onClick={() => handleBuyClick("Дэшборд студента", "3 490 ₸")}
+                onClick={() =>
+                  handleBuyClick({
+                    title: "Дэшборд студента",
+                    price: "3 490 ₸",
+                    slug: "student",
+                  })
+                }
                 className="btn"
               >
                 Оплатить <span className="font-bold ml-1">3 490₸</span> <span className="line-through text-gray-400 ml-2">7 000₸</span>
@@ -428,6 +449,7 @@ export default function Page() {
           onClose={() => setIsCheckoutOpen(false)}
           productTitle={selectedProduct.title}
           productPrice={selectedProduct.price}
+          productSlug={selectedProduct.slug}
         />
 
         {/* Image Gallery Modal */}

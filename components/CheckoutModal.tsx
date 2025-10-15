@@ -8,6 +8,7 @@ interface CheckoutModalProps {
   onClose: () => void;
   productTitle: string;
   productPrice: string;
+  productSlug?: string;
 }
 
 export default function CheckoutModal({
@@ -15,11 +16,13 @@ export default function CheckoutModal({
   onClose,
   productTitle,
   productPrice,
+  productSlug,
 }: CheckoutModalProps) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -30,16 +33,61 @@ export default function CheckoutModal({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  useEffect(() => {
+    if (isOpen) {
+      setError(null);
+    }
+    if (!isOpen) {
+      setIsProcessing(false);
+      setName("");
+      setEmail("");
+    }
+  }, [isOpen]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!productSlug) {
+      setError("Не выбран продукт для оплаты. Попробуйте перезагрузить страницу.");
+      return;
+    }
+
     setIsProcessing(true);
+    setError(null);
     
-    // Здесь будет интеграция с платежной системой
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/robokassa/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productSlug,
+          email: email.trim(),
+          name: name.trim(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data?.paymentUrl) {
+        const message =
+          typeof data?.error === "string"
+            ? data.error
+            : "Не удалось создать платеж. Попробуйте снова.";
+        throw new Error(message);
+      }
+
+      window.location.href = data.paymentUrl;
+    } catch (err) {
+      console.error("[CheckoutModal] create payment error", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Не удалось создать платеж. Попробуйте снова."
+      );
       setIsProcessing(false);
-      alert("Спасибо за покупку! Проверьте email для получения доступа к шаблонам.");
-      onClose();
-    }, 2000);
+    }
   };
 
   const formContent = (
@@ -84,6 +132,12 @@ export default function CheckoutModal({
             placeholder="your@email.com"
           />
         </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
           <div className="flex gap-3">

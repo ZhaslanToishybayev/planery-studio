@@ -7,9 +7,9 @@
 ## Компоненты системы
 
 ### 1. Email сервис (`lib/email.ts`)
-- Отправка email через Gmail SMTP
-- HTML и текстовые версии писем
-- Автоматические шаблоны для подтверждения заказов
+- Отправка писем через Resend API
+- HTML и текстовая версия уведомления
+- Автоматический подбор ссылок доступа по продукту
 
 ### 2. Система заказов (`lib/orders.ts`)
 - Создание и отслеживание заказов
@@ -28,37 +28,49 @@
 Добавьте в `.env.local`:
 
 ```env
-# Email настройки
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-app-password
+# Resend
+EMAIL_SERVICE_API_KEY=your-resend-api-key
+EMAIL_FROM="Planery Studio <support@planery.studio>"
 
-# Robokassa настройки
-ROBOKASSA_MERCHANT_ID=your-merchant-id
-ROBOKASSA_PASSWORD_1=your-password-1
-ROBOKASSA_PASSWORD_2=your-password-2
-ROBOKASSA_TEST_MODE=true
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Robokassa
+ROBOKASSA_LOGIN=your-merchant-id
+ROBOKASSA_PASSWORD1=your-password-1
+ROBOKASSA_PASSWORD2=your-password-2
+ROBOKASSA_PAYMENT_URL=https://auth.robokassa.kz/Merchant/Index.aspx
+ROBOKASSA_TEST_MODE=1
+ROBOKASSA_ENABLE_RECEIPT=1
+ROBOKASSA_DISABLE_REDIRECT=0
+ROBOKASSA_CURRENCY=KZT
 ```
 
-### 2. Настройка Gmail
+### 2. Настройка Resend
 
-1. Включите двухфакторную аутентификацию в Gmail
-2. Создайте App Password:
-   - Google Account → Security → 2-Step Verification → App passwords
-   - Выберите "Mail" и "Other (Custom name)"
-   - Скопируйте сгенерированный пароль
-3. Используйте этот пароль в `EMAIL_PASS`
+1. Зарегистрируйтесь на [resend.com](https://resend.com)
+2. Создайте API-ключ в разделе **API Keys**
+3. Укажите домен отправителя или используйте `onboarding@resend.dev` для тестов
+4. Сохраните ключ в `EMAIL_SERVICE_API_KEY`, адрес отправителя в `EMAIL_FROM`
 
 ### 3. Настройка Vercel
 
 В Vercel Dashboard → Settings → Environment Variables добавьте:
 
 ```
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-app-password
-ROBOKASSA_MERCHANT_ID=your-merchant-id
-ROBOKASSA_PASSWORD_1=your-password-1
-ROBOKASSA_PASSWORD_2=your-password-2
-ROBOKASSA_TEST_MODE=true
+EMAIL_SERVICE_API_KEY=your-resend-api-key
+EMAIL_FROM="Planery Studio <support@planery.studio>"
+ROBOKASSA_LOGIN=your-merchant-id
+ROBOKASSA_PASSWORD1=your-password-1
+ROBOKASSA_PASSWORD2=your-password-2
+ROBOKASSA_PAYMENT_URL=https://auth.robokassa.kz/Merchant/Index.aspx
+ROBOKASSA_TEST_MODE=0
+ROBOKASSA_ENABLE_RECEIPT=1
+ROBOKASSA_DISABLE_REDIRECT=0
+ROBOKASSA_CURRENCY=KZT
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
 ## Процесс работы
@@ -80,10 +92,9 @@ npm run dev
 curl -X POST http://localhost:3000/api/robokassa/create \
   -H "Content-Type: application/json" \
   -d '{
-    "amount": 1000,
-    "description": "Test order",
-    "orderId": "TEST-001",
-    "email": "test@example.com"
+    "productSlug": "productivity",
+    "email": "test@example.com",
+    "name": "Test User"
   }'
 ```
 
@@ -97,7 +108,7 @@ curl -X POST http://localhost:3000/api/robokassa/create \
 ## Безопасность
 
 - ✅ Используйте App Passwords для Gmail
-- ✅ Храните пароли в переменных окружения
+- ✅ Храните пароли и сервисные ключи Supabase только на сервере
 - ✅ Включите HTTPS для production
 - ✅ Валидируйте входящие данные
 - ✅ Логируйте все операции с заказами
@@ -117,12 +128,12 @@ curl -X POST http://localhost:3000/api/robokassa/create \
 ## Troubleshooting
 
 ### Email не отправляется
-1. Проверьте App Password в Gmail
-2. Убедитесь, что 2FA включена
-3. Проверьте логи на ошибки SMTP
+1. Проверьте корректность `EMAIL_SERVICE_API_KEY`
+2. Убедитесь, что домен отправителя подтвержден в Resend
+3. Проверьте логи на ошибки при вызове Resend API
 
 ### Robokassa не работает
-1. Проверьте Merchant ID и пароли
+1. Проверьте `ROBOKASSA_LOGIN` и пароли
 2. Убедитесь, что test mode настроен правильно
 3. Проверьте URL callback'ов
 

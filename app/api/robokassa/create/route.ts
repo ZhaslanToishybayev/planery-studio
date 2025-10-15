@@ -1,29 +1,26 @@
 import { NextResponse } from "next/server";
-import { getProductBySlug } from "@/data/products";
-import { createHash } from "crypto";
 import { headers } from "next/headers";
-import { saveInvoice } from "@/lib/orders";
+import { getProductBySlug } from "@/data/products";
+import {
+  appendOrderEvent,
+  createOrder,
+  generateInvoiceId,
+  getOrderByInvoiceId,
+  updateOrderChecksum,
+} from "@/lib/orders";
 import {
   FALLBACK_DEV_URL,
+  SITE_URL,
   getRequestBaseUrl,
   normalizeSiteUrl,
-  SITE_URL,
 } from "@/lib/siteConfig";
-
-const DEFAULT_PAYMENT_URL = "https://auth.robokassa.kz/Merchant/Index.aspx";
-
-let lastInvoiceId = 0;
-
-// Robokassa expects InvId to be a 32-bit positive integer; keep it monotonic and safe.
-function generateInvoiceId() {
-  const unixSeconds = Math.floor(Date.now() / 1000);
-  if (unixSeconds <= lastInvoiceId) {
-    lastInvoiceId += 1;
-  } else {
-    lastInvoiceId = unixSeconds;
-  }
-  return Math.min(lastInvoiceId, 2147483647);
-}
+import {
+  buildInvoiceSignature,
+  buildReceipt,
+  formatAmountForGateway,
+  getRobokassaConfig,
+  toMinorUnits,
+} from "@/lib/robokassa";
 
 interface CreatePaymentRequest {
   productSlug?: string;
@@ -31,10 +28,20 @@ interface CreatePaymentRequest {
   name?: string;
 }
 
+const MAX_INVOICE_ATTEMPTS = 8;
+
+function sanitizeName(name?: string) {
+  if (!name) return undefined;
+  const trimmed = name.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as CreatePaymentRequest;
-    const { productSlug, email, name } = body;
+    const body = (await request.json()) as CreatePaymentRequest | null;
+    const productSlug = typeof body?.productSlug === "string" ? body.productSlug : null;
+    const email = typeof body?.email === "string" ? body.email.trim() : null;
+    const name = sanitizeName(body?.name);
 
     if (!productSlug || !email) {
       return NextResponse.json(
@@ -48,116 +55,114 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Продукт не найден" }, { status: 404 });
     }
 
-    const requestHeaders = headers();
-    const isMockedPayment =
-      process.env.ROBOKASSA_DISABLE_REDIRECT === "1" ||
-      (process.env.NODE_ENV !== "production" &&
-        process.env.ROBOKASSA_DISABLE_REDIRECT !== "0");
-    const resolvedBaseUrl =
-      requestHeaders.get("origin") ||
-      getRequestBaseUrl(request, requestHeaders) ||
-      SITE_URL;
-    const envBase =
-      process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || null;
+    const robokassa = getRobokassaConfig();
+    const headersList = headers();
 
+    const resolvedBaseUrl =
+      headersList.get("origin") ||
+      getRequestBaseUrl(request, headersList) ||
+      SITE_URL;
+    const envBase = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || null;
     const baseCandidate =
       envBase ||
       (process.env.NODE_ENV !== "production"
         ? FALLBACK_DEV_URL
         : resolvedBaseUrl);
-
     const normalizedBaseUrl = normalizeSiteUrl(baseCandidate);
 
     const successUrl = `${normalizedBaseUrl}/checkout/success`;
     const failUrl = `${normalizedBaseUrl}/checkout/fail`;
     const resultUrl = `${normalizedBaseUrl}/api/robokassa/result`;
-    console.info("[Robokassa] baseUrl", normalizedBaseUrl);
-    console.info("[Robokassa] SuccessURL", successUrl);
 
-    const merchantLogin = process.env.ROBOKASSA_LOGIN;
-    const password1 = process.env.ROBOKASSA_PASSWORD1;
-    const paymentUrl = process.env.ROBOKASSA_PAYMENT_URL || DEFAULT_PAYMENT_URL;
+    const amountString = formatAmountForGateway(product.price);
+    const amountMinor = toMinorUnits(product.price);
 
-    if (!merchantLogin || !password1) {
-      if (!isMockedPayment) {
-        return NextResponse.json(
-          { error: "Robokassa не настроена. Проверьте переменные окружения." },
-          { status: 500 }
-        );
+    let invoiceId = generateInvoiceId();
+    for (let attempt = 0; attempt < MAX_INVOICE_ATTEMPTS; attempt += 1) {
+      const existing = await getOrderByInvoiceId(invoiceId);
+      if (!existing) break;
+      invoiceId += 1;
+      if (attempt === MAX_INVOICE_ATTEMPTS - 1) {
+        throw new Error("Не удалось подобрать уникальный номер счета");
       }
     }
 
-    const invId = generateInvoiceId();
-    const outSum = product.price.toFixed(2);
-    const buyerName = name?.trim();
-
-    const includeReceipt =
-      process.env.ROBOKASSA_ENABLE_RECEIPT === "1" ||
-      process.env.ROBOKASSA_ENABLE_RECEIPT === "true";
-
-    const receipt = includeReceipt
-      ? JSON.stringify({
-          items: [
-            {
-              name: product.name.slice(0, 128),
-              quantity: 1,
-              sum: Number(product.price.toFixed(2)),
-              tax: "none",
-              payment_method: "full_prepayment",
-              payment_object: "service",
-            },
-          ],
-        })
-      : undefined;
-
-    saveInvoice(invId, {
+    const order = await createOrder({
       email,
-      name: buyerName ?? undefined,
+      customerName: name,
       productSlug: product.slug,
+      productName: product.name,
+      amount: amountMinor,
+      currency: robokassa.currency,
+      invoiceId,
     });
+
+    await appendOrderEvent({
+      orderId: order.id,
+      type: "INITIATE",
+      payload: {
+        productSlug,
+        email,
+        name,
+        amount: amountString,
+        currency: robokassa.currency,
+        successUrl,
+        failUrl,
+        resultUrl,
+      },
+    });
+
+    const isMockedPayment =
+      robokassa.disableRedirect ||
+      !robokassa.login ||
+      !robokassa.password1;
 
     if (isMockedPayment) {
       const mockParams = new URLSearchParams({
-        InvId: invId.toString(),
-        OutSum: outSum,
+        InvId: invoiceId.toString(),
+        OutSum: amountString,
         Email: email,
-        MockPayment: "1",
+        mock: "1",
       });
-      const mockUrl = `${normalizedBaseUrl}/checkout/success?${mockParams.toString()}`;
-      console.info("[Robokassa] mocked redirect url", mockUrl);
+      const mockUrl = `${successUrl}?${mockParams.toString()}`;
+      await appendOrderEvent({
+        orderId: order.id,
+        type: "MOCK_REDIRECT",
+        payload: { url: mockUrl },
+      });
       return NextResponse.json({ paymentUrl: mockUrl, mock: true });
     }
 
-    const resolvedMerchantLogin = merchantLogin!;
-    const resolvedPassword1 = password1!;
+    const receipt = robokassa.enableReceipt
+      ? buildReceipt({ productName: product.name, amount: product.price })
+      : undefined;
 
-    const signatureParts = [
-      resolvedMerchantLogin,
-      outSum,
-      invId.toString(),
-    ];
-    if (receipt) {
-      signatureParts.push(receipt);
-    }
-    signatureParts.push(resolvedPassword1);
+    const signature = buildInvoiceSignature({
+      login: robokassa.login!,
+      outSum: amountString,
+      invoiceId,
+      password1: robokassa.password1!,
+      receipt,
+    }).toUpperCase();
 
-    const signatureSource = signatureParts.join(":");
-    const signatureValue = createHash("md5")
-      .update(signatureSource, "utf8")
-      .digest("hex")
-      .toUpperCase();
+    await updateOrderChecksum(order.id, signature);
+    await appendOrderEvent({
+      orderId: order.id,
+      type: "SIGNATURE_PREPARED",
+      payload: { signature },
+    });
 
     const params = new URLSearchParams({
-      MerchantLogin: resolvedMerchantLogin,
-      OutSum: outSum,
-      InvId: invId.toString(),
-      Description: buyerName
-        ? `${product.name} — Planery Studio (${buyerName})`
+      MerchantLogin: robokassa.login!,
+      OutSum: amountString,
+      InvId: invoiceId.toString(),
+      Description: name
+        ? `${product.name} — Planery Studio (${name})`
         : `${product.name} — Planery Studio`,
       Email: email,
       Culture: "ru",
       Encoding: "utf-8",
-      SignatureValue: signatureValue,
+      SignatureValue: signature,
       SuccessURL: successUrl,
       FailURL: failUrl,
       ResultURL: resultUrl,
@@ -167,14 +172,19 @@ export async function POST(request: Request) {
       params.set("Receipt", receipt);
     }
 
-    if (process.env.ROBOKASSA_TEST_MODE === "1") {
+    if (robokassa.testMode) {
       params.set("IsTest", "1");
     }
 
-    const fullUrl = `${paymentUrl}?${params.toString()}`;
-    console.info("[Robokassa] redirect url", fullUrl);
+    const paymentLink = `${robokassa.paymentUrl}?${params.toString()}`;
 
-    return NextResponse.json({ paymentUrl: fullUrl });
+    await appendOrderEvent({
+      orderId: order.id,
+      type: "PAYMENT_LINK_READY",
+      payload: { paymentLink },
+    });
+
+    return NextResponse.json({ paymentUrl: paymentLink });
   } catch (error) {
     console.error("[Robokassa] Ошибка создания платежа", error);
     return NextResponse.json(

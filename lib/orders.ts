@@ -1,100 +1,171 @@
-export interface Order {
+import { supabaseServerClient } from "@/lib/supabaseServer";
+
+export const ORDER_STATUS = {
+  PENDING: "PENDING",
+  PAID: "PAID",
+  FAILED: "FAILED",
+  CANCELLED: "CANCELLED",
+} as const;
+
+export type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];
+
+const TABLE_ORDERS = "orders";
+const TABLE_EVENTS = "order_events";
+
+export interface OrderRecord {
   id: string;
   email: string;
-  productId: string;
+  customerName: string | null;
+  productSlug: string;
   productName: string;
   amount: number;
-  status: 'pending' | 'paid' | 'failed' | 'cancelled';
-  createdAt: Date;
-  paidAt?: Date;
-  downloadLinks: string[];
+  currency: string;
+  invoiceId: number;
+  status: OrderStatus;
+  checksum: string | null;
+  paidAt: string | null;
 }
 
-// В реальном проекте здесь была бы база данных
-// Для демонстрации используем простой массив
-const orders: Order[] = [];
+function mapOrder(row: any): OrderRecord {
+  return {
+    id: row.id,
+    email: row.email,
+    customerName: row.customer_name ?? null,
+    productSlug: row.product_slug,
+    productName: row.product_name,
+    amount: row.amount,
+    currency: row.currency,
+    invoiceId: row.invoice_id,
+    status: row.status,
+    checksum: row.checksum ?? null,
+    paidAt: row.paid_at ?? null,
+  };
+}
 
-interface PendingInvoice {
+function ensureClient() {
+  if (!supabaseServerClient) {
+    throw new Error("Supabase клиент не инициализирован. Проверьте переменные окружения.");
+  }
+  return supabaseServerClient;
+}
+
+export async function createOrder({
+  email,
+  customerName,
+  productSlug,
+  productName,
+  amount,
+  currency,
+  invoiceId,
+}: {
   email: string;
-  productSlug?: string;
-  name?: string;
-}
+  customerName?: string;
+  productSlug: string;
+  productName: string;
+  amount: number;
+  currency: string;
+  invoiceId: number;
+}): Promise<OrderRecord> {
+  const client = ensureClient();
+  const { data, error } = await client
+    .from(TABLE_ORDERS)
+    .insert({
+      email,
+      customer_name: customerName ?? null,
+      product_slug: productSlug,
+      product_name: productName,
+      amount,
+      currency,
+      invoice_id: invoiceId,
+      status: ORDER_STATUS.PENDING,
+    })
+    .select()
+    .single();
 
-const pendingInvoices = new Map<number, PendingInvoice>();
-
-export function createOrder(
-  email: string,
-  productId: string,
-  productName: string,
-  amount: number,
-  downloadLinks: string[]
-): Order {
-  const order: Order = {
-    id: generateOrderId(),
-    email,
-    productId,
-    productName,
-    amount,
-    status: 'pending',
-    createdAt: new Date(),
-    downloadLinks,
-  };
-
-  orders.push(order);
-  return order;
-}
-
-export function getOrderById(id: string): Order | undefined {
-  return orders.find(order => order.id === id);
-}
-
-export function updateOrderStatus(id: string, status: Order['status']): boolean {
-  const order = orders.find(o => o.id === id);
-  if (order) {
-    order.status = status;
-    if (status === 'paid') {
-      order.paidAt = new Date();
-    }
-    return true;
+  if (error) {
+    throw error;
   }
-  return false;
+  return mapOrder(data);
 }
 
-export function getOrdersByEmail(email: string): Order[] {
-  return orders.filter(order => order.email === email);
-}
+export async function getOrderByInvoiceId(invoiceId: number): Promise<OrderRecord | null> {
+  const client = ensureClient();
+  const { data, error } = await client
+    .from(TABLE_ORDERS)
+    .select("*")
+    .eq("invoice_id", invoiceId)
+    .maybeSingle();
 
-export function saveInvoice(id: number, payload: PendingInvoice) {
-  pendingInvoices.set(id, payload);
-}
-
-export function consumeInvoice(id: number): PendingInvoice | undefined {
-  const invoice = pendingInvoices.get(id);
-  if (invoice) {
-    pendingInvoices.delete(id);
+  if (error) {
+    throw error;
   }
-  return invoice;
+  return data ? mapOrder(data) : null;
 }
 
-function generateOrderId(): string {
-  const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substr(2, 5);
-  return `ORD-${timestamp}-${random}`.toUpperCase();
+export async function updateOrderChecksum(orderId: string, checksum: string): Promise<OrderRecord> {
+  const client = ensureClient();
+  const { data, error } = await client
+    .from(TABLE_ORDERS)
+    .update({ checksum })
+    .eq("id", orderId)
+    .select()
+    .single();
+  if (error) throw error;
+  return mapOrder(data);
 }
 
-// Функция для получения ссылок на скачивание для продукта
-export function getProductDownloadLinks(productId: string): string[] {
-  // В реальном проекте это было бы в базе данных
-  const productLinks: Record<string, string[]> = {
-    'student-planner': [
-      'https://drive.google.com/file/d/1ABC123/view',
-      'https://drive.google.com/file/d/1DEF456/view',
-    ],
-    'productivity-system': [
-      'https://drive.google.com/file/d/1GHI789/view',
-      'https://drive.google.com/file/d/1JKL012/view',
-    ],
-  };
+export async function markOrderAsPaid(orderId: string): Promise<OrderRecord> {
+  const client = ensureClient();
+  const { data, error } = await client
+    .from(TABLE_ORDERS)
+    .update({
+      status: ORDER_STATUS.PAID,
+      paid_at: new Date().toISOString(),
+    })
+    .eq("id", orderId)
+    .select()
+    .single();
+  if (error) throw error;
+  return mapOrder(data);
+}
 
-  return productLinks[productId] || [];
+export async function markOrderAsFailed(orderId: string): Promise<OrderRecord> {
+  const client = ensureClient();
+  const { data, error } = await client
+    .from(TABLE_ORDERS)
+    .update({
+      status: ORDER_STATUS.FAILED,
+    })
+    .eq("id", orderId)
+    .select()
+    .single();
+  if (error) throw error;
+  return mapOrder(data);
+}
+
+export async function appendOrderEvent({
+  orderId,
+  type,
+  payload,
+}: {
+  orderId: string;
+  type: string;
+  payload: unknown;
+}) {
+  const client = ensureClient();
+  const { data, error } = await client
+    .from(TABLE_EVENTS)
+    .insert({
+      order_id: orderId,
+      type,
+      payload,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export function generateInvoiceId() {
+  return Math.floor(Date.now() / 1000);
 }
