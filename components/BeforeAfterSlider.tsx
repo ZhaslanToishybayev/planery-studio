@@ -40,8 +40,8 @@ export default function BeforeAfterSlider() {
     >
       {/* After Image (Background) */}
       <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
-        <div className="text-center p-8 before-after-content" style={{ transform: 'scale(0.7)' }}>
-                    <div className="text-6xl mb-8">😵‍💫</div>          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+<div className="text-center p-8 before-after-content">
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">
             С Planery
           </h3>
           <p className="text-gray-600 max-w-md">
@@ -70,23 +70,29 @@ export default function BeforeAfterSlider() {
         className="absolute inset-0 bg-gradient-to-br from-red-50 to-orange-100 flex items-center justify-center"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       >
-        <div className="text-center p-8 before-after-content" style={{ transform: 'scale(0.7)' }}>
-<h3 className="text-2xl font-bold text-gray-900 mb-2">
+        <div className="text-center p-8 before-after-content">
+          <div className="text-6xl mb-4">😵‍💫</div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">
             Без системы
           </h3>
+          <p className="text-gray-600 max-w-md">
+            Задачи в 5 разных местах. Постоянный хаос. Забытые дедлайны. 
+            Стресс и перегруженность.
+          </p>
           <div className="mt-6 space-y-2">
-                      <div className="flex items-center justify-center gap-2 text-red-600">
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                        </svg>
-                        <span className="font-medium">Постоянный стресс</span>
-                      </div>
-                      <div className="flex items-center justify-center gap-2 text-red-600">
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                        </svg>
-                        <span className="font-medium">Упущенные возможности</span>
-                      </div>          </div>
+            <div className="flex items-center justify-center gap-2 text-red-600">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <span className="font-medium">Постоянный стресс</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 text-red-600">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <span className="font-medium">Упущенные возможности</span>
+            </div>
+          </div>
         </div>
       </div>
 
