@@ -40,7 +40,7 @@ export default function BeforeAfterSlider() {
     >
       {/* After Image (Background) */}
       <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
-        <div className="text-center p-8">
+        <div className="text-center p-8" style={{ transform: 'scale(0.8)' }}>
           <div className="text-6xl mb-4">✅</div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
             С Planery
@@ -71,7 +71,7 @@ export default function BeforeAfterSlider() {
         className="absolute inset-0 bg-gradient-to-br from-red-50 to-orange-100 flex items-center justify-center"
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       >
-        <div className="text-center p-8">
+        <div className="text-center p-8" style={{ transform: 'scale(0.8)' }}>
           <div className="text-6xl mb-8">😵‍💫</div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
             Без системы
