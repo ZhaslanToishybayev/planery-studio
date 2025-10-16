@@ -150,7 +150,7 @@ export default function Page() {
             
             <AnimatedSection animation="fadeRight" delay={0.2}>
               <div 
-                className="relative cursor-pointer" 
+                className="relative cursor-pointer overflow-hidden" 
                 onClick={() => handleImageClick([
                   "/assets/middle(productivity).png",
                   "/assets/head(productivity).png",
@@ -190,7 +190,7 @@ export default function Page() {
         <section id="productivity" className="border-t border-gray-100">
           <div className="container-1200 py-16 grid lg:grid-cols-2 gap-10 items-center">
             <div 
-              className="relative order-2 lg:order-1 cursor-pointer"
+              className="relative order-2 lg:order-1 cursor-pointer overflow-hidden"
               onClick={() => handleImageClick([
                 "/assets/middle(productivity).png",
                 "/assets/head(productivity).png",
@@ -297,7 +297,7 @@ export default function Page() {
               </button>
             </div>
             <div 
-              className="relative cursor-pointer"
+              className="relative cursor-pointer overflow-hidden"
               onClick={() => handleImageClick([
                 "/assets/middle(student).png",
                 "/assets/header(student).png",

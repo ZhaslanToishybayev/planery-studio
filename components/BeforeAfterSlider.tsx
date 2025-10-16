@@ -72,7 +72,7 @@ export default function BeforeAfterSlider() {
         style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
       >
         <div className="text-center p-8">
-          <div className="text-6xl mb-4">😵‍💫</div>
+          <div className="text-6xl mb-8">😵‍💫</div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
             Без системы
           </h3>
