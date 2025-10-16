@@ -15,6 +15,7 @@ import CookieConsent from "@/components/CookieConsent";
 import DecorativeBlob from "@/components/DecorativeBlob";
 import AnimatedSection from "@/components/AnimatedSection";
 import ProductQuiz from "@/components/ProductQuiz";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function Page() {
@@ -487,11 +488,14 @@ export default function Page() {
               )}
 
               {/* Image */}
-              <div className="relative">
-                <img
+              <div className="relative w-full">
+                <Image
                   src={galleryImages[currentImageIndex]}
                   alt={`Screenshot ${currentImageIndex + 1}`}
-                  className="w-full rounded-lg shadow-2xl"
+                  width={1920}
+                  height={1080}
+                  className="w-full h-auto rounded-lg shadow-2xl object-cover"
+                  sizes="(max-width: 768px) 100vw, 80vw"
                 />
               </div>
 

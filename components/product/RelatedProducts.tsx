@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Product } from "@/data/products";
@@ -35,8 +36,14 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
               >
                 <div className="bg-white rounded-2xl border-2 border-gray-200 overflow-hidden hover:border-[var(--brand)] hover:shadow-xl transition-all duration-300">
                   {/* Image */}
-                  <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                    <div className="text-5xl">📊</div>
+                  <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200">
+                    <Image
+                      src={product.gallery[0] || "/assets/catalog/client-portal.png"}
+                      alt={`Скриншот ${product.name}`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
                     {product.isPopular && (
                       <div className="absolute top-3 right-3">
                         <span className="inline-flex items-center px-3 py-1 rounded-full bg-[var(--brand)] text-white text-xs font-semibold">

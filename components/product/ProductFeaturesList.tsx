@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ProductFeature } from "@/data/products";
 
@@ -36,10 +37,14 @@ export default function ProductFeaturesList({ features }: ProductFeaturesListPro
                 }`}
               >
                 <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                    <div className="text-6xl">{feature.icon}</div>
-                  </div>
-                  {/* Placeholder - в реальности будет изображение */}
+                  <Image
+                    src={feature.screenshot || "/assets/catalog/client-portal.png"}
+                    alt={`${feature.title} — скриншот`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-transparent pointer-events-none" />
                 </div>
               </div>
 

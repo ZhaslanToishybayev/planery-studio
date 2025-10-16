@@ -1,4 +1,6 @@
 "use client";
+import { useMemo, useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { allProducts } from "@/data/products";
@@ -7,6 +9,92 @@ import Footer from "@/components/Footer";
 import ScrollProgress from "@/components/ScrollProgress";
 
 export default function ProductsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTag, setActiveTag] = useState("all");
+
+  const tagLabels: Record<string, string> = useMemo(
+    () => ({
+      productivity: "Продуктивность",
+      tasks: "Задачи",
+      habits: "Привычки",
+      projects: "Проекты",
+      notes: "Заметки",
+      student: "Учёба",
+      education: "Образование",
+      school: "Школа",
+      study: "Подготовка",
+      bundle: "Комплект",
+      freelance: "Фриланс",
+      clients: "Клиенты",
+      business: "Бизнес",
+      finance: "Финансы",
+      fitness: "Фитнес",
+      workout: "Тренировки",
+      health: "Здоровье",
+      sport: "Спорт",
+      muslim: "Баланс",
+      spiritual: "Духовное",
+      content: "Контент",
+      para: "PARA",
+      missions: "Проекты",
+      consulting: "Консалтинг",
+    }),
+    []
+  );
+
+  const availableTags = useMemo(() => {
+    const uniqueTags = new Set<string>();
+    allProducts.forEach((product) => {
+      product.tags.forEach((tag) => uniqueTags.add(tag));
+    });
+    return Array.from(uniqueTags).sort((a, b) => a.localeCompare(b, "ru"));
+  }, []);
+
+  const tagOptions = useMemo(
+    () => ["all", ...availableTags.slice(0, 10)],
+    [availableTags]
+  );
+
+  const filteredProducts = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    const matchesSearch = (value: string) =>
+      value.toLowerCase().includes(query);
+
+    const base = allProducts.filter((product) => {
+      const matchByTag =
+        activeTag === "all" || product.tags.includes(activeTag);
+
+      if (!matchByTag) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
+      return (
+        matchesSearch(product.name) ||
+        matchesSearch(product.tagline) ||
+        matchesSearch(product.shortDescription) ||
+        product.tags.some((tag) => matchesSearch(tag))
+      );
+    });
+
+    const sorted = [...base].sort((a, b) => {
+      if (a.isPopular && !b.isPopular) return -1;
+      if (!a.isPopular && b.isPopular) return 1;
+      if (a.isBestSeller && !b.isBestSeller) return -1;
+      if (!a.isBestSeller && b.isBestSeller) return 1;
+      if ((b.reviewCount || 0) !== (a.reviewCount || 0)) {
+        return (b.reviewCount || 0) - (a.reviewCount || 0);
+      }
+      return (b.rating || 0) - (a.rating || 0);
+    });
+
+    return sorted;
+  }, [activeTag, searchQuery]);
+
   return (
     <>
       <ScrollProgress />
@@ -26,6 +114,68 @@ export default function ProductsPage() {
                 Профессиональные Notion-шаблоны для продуктивности и учёбы.
                 Выберите подходящий продукт или возьмите всё сразу со скидкой.
               </p>
+
+              <div className="max-w-2xl mx-auto mb-10">
+                <div className="relative">
+                  <input
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="Поиск по названию, описанию и тегам..."
+                    className="w-full rounded-2xl border-2 border-gray-200 px-6 py-4 pr-12 text-lg shadow-sm transition focus:border-[var(--brand)] focus:outline-none focus:shadow-lg"
+                    aria-label="Поиск продуктов"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+                      aria-label="Очистить поиск"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap justify-center gap-3 mb-10">
+                {tagOptions.map((tag) => {
+                  const isActive = tag === activeTag;
+                  const label =
+                    tag === "all"
+                      ? "Все категории"
+                      : tagLabels[tag] ?? `#${tag}`;
+
+                  return (
+                    <button
+                      key={tag}
+                      onClick={() => setActiveTag(tag)}
+                      className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                        isActive
+                          ? "border-[var(--brand)] bg-[var(--brand)] text-white shadow-lg"
+                          : "border-gray-200 bg-white text-gray-600 hover:border-[var(--brand)] hover:text-[var(--brand)]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="text-sm text-gray-500">
+                Найдено товаров: {filteredProducts.length}
+              </div>
+
               <div className="flex items-center justify-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
@@ -53,26 +203,36 @@ export default function ProductsPage() {
         {/* Products Grid */}
         <section className="py-20">
           <div className="container-1200">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {allProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Link href={`/products/${product.slug}`} className="block group h-full">
-                    <div className="h-full bg-white rounded-2xl border-2 border-gray-200 overflow-hidden hover:border-[var(--brand)] hover:shadow-2xl transition-all duration-300 flex flex-col">
-                      {/* Image */}
-                      <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                        <div className="text-6xl">📊</div>
-                        
-                        {/* Badges */}
-                        <div className="absolute top-3 right-3 flex flex-col gap-2">
-                          {product.isPopular && (
-                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-[var(--brand)] to-blue-500 text-white text-xs font-semibold shadow-lg">
-                              🔥 Популярный
-                            </span>
+            {filteredProducts.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-white/60 p-12 text-center text-gray-600">
+                Ничего не найдено. Попробуйте изменить запрос или выбрать другую категорию.
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredProducts.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Link href={`/products/${product.slug}`} className="block group h-full">
+                      <div className="h-full bg-white rounded-2xl border-2 border-gray-200 overflow-hidden hover:border-[var(--brand)] hover:shadow-2xl transition-all duration-300 flex flex-col">
+                        {/* Image */}
+                        <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200">
+                          <Image
+                            src={product.gallery[0] || "/assets/catalog/client-portal.png"}
+                            alt={`Скриншот шаблона ${product.name}`}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                          />
+                          {/* Badges */}
+                          <div className="absolute top-3 right-3 flex flex-col gap-2">
+                            {product.isPopular && (
+                              <span className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-[var(--brand)] to-blue-500 text-white text-xs font-semibold shadow-lg">
+                                🔥 Популярный
+                              </span>
                           )}
                           {product.isBestSeller && (
                             <span className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-semibold shadow-lg">
@@ -133,11 +293,12 @@ export default function ProductsPage() {
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

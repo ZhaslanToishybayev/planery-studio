@@ -2,31 +2,31 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const BUYER_NAMES = [
+  "Алина К.",
+  "Данияр Н.",
+  "Айгерим С.",
+  "Ербол М.",
+  "Жанар Т.",
+  "Асель Б.",
+  "Нурлан А.",
+  "Динара К.",
+];
+
+const BUYER_LOCATIONS = [
+  "Алматы",
+  "Астана",
+  "Шымкент",
+  "Караганда",
+  "Актобе",
+  "Тараз",
+  "Павлодар",
+];
+
 export default function LiveStats() {
   const [todayPurchases, setTodayPurchases] = useState(0);
   const [recentBuyer, setRecentBuyer] = useState("");
   const [showNotification, setShowNotification] = useState(false);
-
-  const names = [
-    "Алина К.",
-    "Данияр Н.",
-    "Айгерим С.",
-    "Ербол М.",
-    "Жанар Т.",
-    "Асель Б.",
-    "Нурлан А.",
-    "Динара К.",
-  ];
-
-  const locations = [
-    "Алматы",
-    "Астана",
-    "Шымкент",
-    "Караганда",
-    "Актобе",
-    "Тараз",
-    "Павлодар",
-  ];
 
   useEffect(() => {
     // Simulate initial count
@@ -36,8 +36,10 @@ export default function LiveStats() {
 
     // Show random purchase notifications
     const interval = setInterval(() => {
-      const randomName = names[Math.floor(Math.random() * names.length)];
-      const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+      const randomName =
+        BUYER_NAMES[Math.floor(Math.random() * BUYER_NAMES.length)];
+      const randomLocation =
+        BUYER_LOCATIONS[Math.floor(Math.random() * BUYER_LOCATIONS.length)];
       setRecentBuyer(`${randomName} из ${randomLocation}`);
       setShowNotification(true);
       

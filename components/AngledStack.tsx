@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 type XY = { x: number; y: number };
 
@@ -51,7 +52,14 @@ export default function AngledStack({
             transformOrigin: "center",
           }}
         >
-          <img src={left} alt="" className="w-full h-auto object-contain" />
+          <Image
+            src={left}
+            alt=""
+            width={1410}
+            height={768}
+            className="w-full h-auto object-contain"
+            sizes="(max-width: 768px) 90vw, 45vw"
+          />
         </div>
       </motion.div>
 
@@ -73,7 +81,15 @@ export default function AngledStack({
             transformOrigin: "center",
           }}
         >
-          <img src={center} alt="" className="w-full h-auto object-contain" />
+          <Image
+            src={center}
+            alt=""
+            width={1410}
+            height={768}
+            className="w-full h-auto object-contain"
+            sizes="(max-width: 768px) 90vw, 45vw"
+            priority
+          />
         </div>
       </motion.div>
 
@@ -95,7 +111,14 @@ export default function AngledStack({
             transformOrigin: "center",
           }}
         >
-          <img src={right} alt="" className="w-full h-auto object-contain" />
+          <Image
+            src={right}
+            alt=""
+            width={1410}
+            height={768}
+            className="w-full h-auto object-contain"
+            sizes="(max-width: 768px) 90vw, 45vw"
+          />
         </div>
       </motion.div>
     </motion.div>

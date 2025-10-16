@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 interface GalleryImage {
   src: string;
@@ -45,10 +46,12 @@ export default function ProductGallery() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
           >
-            <img 
-              src={image.src} 
+            <Image
+              src={image.src}
               alt={image.title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 50vw, 25vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
@@ -87,11 +90,13 @@ export default function ProductGallery() {
                 </button>
 
                 <div className="bg-white rounded-2xl overflow-hidden">
-                  <div className="aspect-video bg-gray-900">
-                    <img 
-                      src={images[selectedImage].src} 
+                  <div className="relative aspect-video bg-gray-900">
+                    <Image
+                      src={images[selectedImage].src}
                       alt={images[selectedImage].title}
-                      className="w-full h-full object-contain"
+                      fill
+                      className="object-contain"
+                      sizes="90vw"
                     />
                   </div>
                   <div className="p-6">

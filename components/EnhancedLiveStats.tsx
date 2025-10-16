@@ -146,7 +146,7 @@ export default function EnhancedLiveStats() {
 
                   {currentActivity.type === "review" && currentActivity.text && (
                     <p className="text-gray-700 text-sm mb-1 italic">
-                      "{currentActivity.text}"
+                      &ldquo;{currentActivity.text}&rdquo;
                     </p>
                   )}
 

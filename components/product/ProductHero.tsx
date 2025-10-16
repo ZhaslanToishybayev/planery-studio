@@ -9,6 +9,8 @@ interface ProductHeroProps {
 }
 
 export default function ProductHero({ product, onBuyClick }: ProductHeroProps) {
+  const heroImage = product.gallery[0] ?? "/assets/catalog/client-portal.png";
+
   return (
     <section className="bg-gradient-to-b from-gray-50 to-white border-b border-gray-100">
       <div className="container-1200 py-12 md:py-20">
@@ -21,10 +23,15 @@ export default function ProductHero({ product, onBuyClick }: ProductHeroProps) {
             transition={{ duration: 0.6 }}
           >
             <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <div className="text-6xl">📊</div>
-              </div>
-              {/* Placeholder - заменить на реальное изображение когда будут */}
+              <Image
+                src={heroImage}
+                alt={`Скриншот шаблона ${product.name}`}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-tr from-black/30 via-transparent to-transparent pointer-events-none" />
             </div>
           </motion.div>
 

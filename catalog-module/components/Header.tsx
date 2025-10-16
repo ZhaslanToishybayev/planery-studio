@@ -57,7 +57,7 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <Link
               href="/catalog"
-              className="hidden md:inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:text-[var(--brand)] hover:bg-gray-100 transition"
+              className="btn-secondary hidden md:inline-flex"
             >
               Каталог
             </Link>
@@ -125,10 +125,10 @@ export default function Header() {
                 </div>
                 <Link
                   href="/catalog"
-                  className="text-base font-semibold text-gray-700 hover:text-[var(--brand)] transition"
+                  className="btn-secondary"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Каталог шаблонов
+                  Каталог
                 </Link>
                 <Link
                   href="#pricing"

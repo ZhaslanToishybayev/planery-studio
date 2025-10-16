@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -37,10 +38,14 @@ export default function ProductGalleryDetailed({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <div className="text-4xl">📊</div>
-                </div>
-                
+                <Image
+                  src={image || "/assets/catalog/client-portal.png"}
+                  alt={`${productName} — скриншот ${index + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                />
+
                 {/* Overlay */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity">
@@ -110,8 +115,14 @@ export default function ProductGalleryDetailed({
 
                 {/* Image */}
                 <div className="bg-white rounded-2xl overflow-hidden">
-                  <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                    <div className="text-6xl">📊</div>
+                  <div className="relative aspect-video">
+                    <Image
+                      src={gallery[selectedImage] || "/assets/catalog/client-portal.png"}
+                      alt={`${productName} — крупный план ${selectedImage + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 70vw"
+                    />
                   </div>
                   <div className="p-6 bg-white">
                     <p className="text-lg font-semibold text-gray-900">
