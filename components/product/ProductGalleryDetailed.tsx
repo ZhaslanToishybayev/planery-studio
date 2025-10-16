@@ -29,7 +29,7 @@ export default function ProductGalleryDetailed({
             {gallery.map((image, index) => (
               <motion.div
                 key={index}
-                className="relative aspect-video rounded-xl overflow-hidden cursor-pointer group border border-gray-200 bg-white"
+                className="relative cursor-pointer group"
                 onClick={() => setSelectedImage(index)}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -38,17 +38,32 @@ export default function ProductGalleryDetailed({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Image
-                  src={image || "/assets/catalog/client-portal.png"}
-                  alt={`${productName} — скриншот ${index + 1}`}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                />
+                <div className="relative rounded-[32px] bg-gradient-to-br from-[#7f5af0] via-[#ff8ba7] to-[#ffd803] p-4 sm:p-6 shadow-[0_30px_60px_-40px_rgba(127,90,240,0.6)] overflow-hidden">
+                  <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.9),_transparent_70%)]" />
+                  <div className="absolute inset-0 opacity-20 bg-[linear-gradient(140deg,rgba(255,255,255,0.4)_0%,transparent_45%,transparent_55%,rgba(255,255,255,0.4)_100%)]" />
+
+                  <div className="relative rounded-[24px] border border-white/30 bg-white/10 backdrop-blur-sm overflow-hidden">
+                    <div className="relative aspect-[4/5]">
+                      <Image
+                        src={image || "/assets/catalog/client-portal.png"}
+                        alt={`${productName} — скриншот ${index + 1}`}
+                        fill
+                        className="object-contain scale-[1.02]"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      />
+                    </div>
+                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/15" />
+                    <div className="absolute inset-0 border border-white/10 rounded-[24px] pointer-events-none" />
+                  </div>
+
+                  <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center font-bold text-sm z-10">
+                    {index + 1}
+                  </div>
+                </div>
 
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute inset-0 rounded-[32px] bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center pointer-events-none">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity text-white">
                     <svg
                       className="w-12 h-12 text-white"
                       fill="none"
@@ -63,11 +78,6 @@ export default function ProductGalleryDetailed({
                       />
                     </svg>
                   </div>
-                </div>
-
-                {/* Number badge */}
-                <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center font-bold text-sm">
-                  {index + 1}
                 </div>
               </motion.div>
             ))}
@@ -114,8 +124,8 @@ export default function ProductGalleryDetailed({
                 </button>
 
                 {/* Image */}
-                <div className="bg-white rounded-2xl overflow-hidden border border-gray-200">
-                  <div className="relative aspect-video bg-white">
+                <div className="bg-white rounded-3xl overflow-hidden border border-gray-200 shadow-2xl">
+                  <div className="relative aspect-[4/5] bg-white">
                     <Image
                       src={gallery[selectedImage] || "/assets/catalog/client-portal.png"}
                       alt={`${productName} — крупный план ${selectedImage + 1}`}

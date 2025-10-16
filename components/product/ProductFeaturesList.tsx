@@ -31,20 +31,36 @@ export default function ProductFeaturesList({ features }: ProductFeaturesListPro
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
               {/* Screenshot */}
-              <div
-                className={`relative ${
-                  index % 2 === 0 ? "" : "lg:col-start-2"
-                }`}
-              >
-                <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-white">
-                  <Image
-                    src={feature.screenshot || "/assets/catalog/client-portal.png"}
-                    alt={`${feature.title} — скриншот`}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent pointer-events-none" />
+              <div className={`relative ${index % 2 === 0 ? "" : "lg:col-start-2"}`}>
+                <div className="absolute -top-8 -left-6 hidden md:block">
+                  <div className="h-20 w-16 rounded-2xl overflow-hidden border border-white/60 shadow-lg bg-white/60 backdrop-blur">
+                    <Image
+                      src={feature.screenshot || "/assets/catalog/client-portal.png"}
+                      alt={`${feature.title} — мини-превью`}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </div>
+                </div>
+
+                <div className="relative rounded-[36px] bg-gradient-to-br from-[#7f5af0] via-[#ff8ba7] to-[#ffd803] p-4 sm:p-7 shadow-[0_35px_60px_-40px_rgba(127,90,240,0.65)] overflow-hidden">
+                  <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.9),_transparent_70%)]" />
+                  <div className="absolute inset-0 opacity-20 bg-[linear-gradient(140deg,rgba(255,255,255,0.4)_0%,transparent_45%,transparent_55%,rgba(255,255,255,0.4)_100%)]" />
+
+                  <div className="relative rounded-[26px] border border-white/30 bg-white/10 backdrop-blur-sm overflow-hidden">
+                    <div className="relative aspect-[4/5] md:aspect-[3/4]">
+                      <Image
+                        src={feature.screenshot || "/assets/catalog/client-portal.png"}
+                        alt={`${feature.title} — скриншот`}
+                        fill
+                        className="object-contain scale-[1.03]"
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                      />
+                    </div>
+                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/15" />
+                    <div className="absolute inset-0 border border-white/10 rounded-[26px] pointer-events-none" />
+                  </div>
                 </div>
               </div>
 
