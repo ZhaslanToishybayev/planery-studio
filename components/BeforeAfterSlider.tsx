@@ -39,8 +39,8 @@ export default function BeforeAfterSlider() {
       onTouchMove={handleTouchMove}
     >
       {/* After Image (Background) */}
+      <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
 <div className="text-center p-8 before-after-content">
-          <div className="text-6xl mb-4">✅</div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
             С Planery
           </h3>
