@@ -379,20 +379,7 @@ body {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
-.before-after-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  transform: scale(0.8);
-}
 
-@media (max-width: 768px) {
-  .before-after-content {
-    transform: scale(0.7);
-  }
-}
 
 /* Mobile Optimizations */
 @media (max-width: 768px) {

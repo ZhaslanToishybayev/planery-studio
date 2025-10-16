@@ -9,7 +9,7 @@ import ProductFeatures from "@/components/ProductFeatures";
 import Footer from "@/components/Footer";
 import FloatingElement from "@/components/FloatingElement";
 import ScrollProgress from "@/components/ScrollProgress";
-import BeforeAfterSlider from "@/components/BeforeAfterSlider";
+
 import CountdownTimer from "@/components/CountdownTimer";
 import CookieConsent from "@/components/CookieConsent";
 import DecorativeBlob from "@/components/DecorativeBlob";
@@ -318,27 +318,7 @@ export default function Page() {
           </div>
         </section>
 
-        {/* Before/After Comparison */}
-        <section className="relative border-t border-gray-100 bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden">
-          <DecorativeBlob color="green" size="md" position="top-left" opacity={12} />
-          <div className="container-1200 py-20 relative z-10">
-            <AnimatedSection animation="fadeUp">
-              <div className="text-center mb-12">
-                <h2 className="display-md mb-4">
-                  Жизнь <span className="gradient-text">до</span> и <span className="gradient-text-accent">после</span> Planery
-                </h2>
-                <p className="body-lg text-gray-600">
-                  Перетяните слайдер, чтобы увидеть разницу
-                </p>
-              </div>
-            </AnimatedSection>
-            <AnimatedSection animation="scale" delay={0.2}>
-              <div className="max-w-4xl mx-auto">
-                <BeforeAfterSlider />
-              </div>
-            </AnimatedSection>
-          </div>
-        </section>
+
 
         {/* Testimonials */}
         <section className="border-t border-gray-100">
