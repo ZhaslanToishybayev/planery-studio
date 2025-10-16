@@ -13,7 +13,6 @@ import QuickViewModal from "@/components/QuickViewModal";
 import { allProducts, type Product } from "@/data/products";
 
 type SortOption = "popular" | "price-asc" | "price-desc" | "rating";
-
 export default function CatalogPage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState({
@@ -27,6 +26,8 @@ export default function CatalogPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const totalProducts = allProducts.length;
 
   const handleBuyClick = (product: Product) => {
     if (isQuickViewOpen) {
@@ -81,13 +82,61 @@ export default function CatalogPage() {
     []
   );
 
-  const allTags = useMemo(() => {
-    const tagsSet = new Set<string>();
+  const tagUsage = useMemo(() => {
+    const usage: Record<string, number> = {};
     allProducts.forEach((product) => {
-      product.tags.forEach((tag) => tagsSet.add(tag));
+      product.tags.forEach((tag) => {
+        usage[tag] = (usage[tag] || 0) + 1;
+      });
     });
-    return Array.from(tagsSet).slice(0, 10);
+    return usage;
   }, []);
+
+  const allTags = useMemo(() => {
+    return Object.keys(tagUsage).sort((a, b) => {
+      const diff = (tagUsage[b] || 0) - (tagUsage[a] || 0);
+      return diff === 0 ? a.localeCompare(b, "ru") : diff;
+    });
+  }, [tagUsage]);
+
+  const tagLabels: Record<string, string> = useMemo(
+    () => ({
+      productivity: "Продуктивность",
+      tasks: "Задачи",
+      habits: "Привычки",
+      projects: "Проекты",
+      notes: "Заметки",
+      student: "Учёба",
+      education: "Образование",
+      school: "Школа",
+      study: "Учёба",
+      bundle: "Комплект",
+      freelance: "Фриланс",
+      clients: "Клиенты",
+      business: "Бизнес",
+      finance: "Финансы",
+      fitness: "Фитнес",
+      workout: "Тренировки",
+      health: "Здоровье",
+      sport: "Спорт",
+      muslim: "Баланс",
+      spiritual: "Духовное",
+      content: "Контент",
+      para: "PARA",
+      missions: "Миссии",
+      gamification: "Геймификация",
+      creator: "Креаторы",
+      marketing: "Маркетинг",
+      premium: "Premium",
+      complete: "Полный набор",
+      bestseller: "Хит",
+      consulting: "Консалтинг",
+      faith: "Вера",
+      parents: "Родителям",
+      learning: "Обучение",
+    }),
+    []
+  );
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -155,7 +204,15 @@ export default function CatalogPage() {
     return sorted;
   }, [selectedCategory, selectedTags, searchQuery, sortBy, getCategoryForProduct]);
 
-  const activeFiltersCount = selectedTags.length + (selectedCategory === "all" ? 0 : 1);
+  const searchActive = searchQuery.trim().length > 0;
+  const activeFiltersCount =
+    selectedTags.length + (selectedCategory === "all" ? 0 : 1) + (searchActive ? 1 : 0);
+
+  const resetAllFilters = () => {
+    setSelectedCategory("all");
+    setSelectedTags([]);
+    setSearchQuery("");
+  };
 
   return (
     <>
@@ -235,12 +292,37 @@ export default function CatalogPage() {
                   <option value="price-desc">Цена ↓</option>
                   <option value="rating">По рейтингу</option>
                 </select>
+                <div className="hidden sm:flex items-center rounded-xl border-2 border-gray-200 bg-white overflow-hidden">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`px-3 py-2 text-sm font-medium transition flex items-center gap-1 ${
+                      viewMode === "grid"
+                        ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                        : "text-gray-600 hover:bg-gray-50"
+                    }`}
+                    aria-label="Вид сеткой"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M3 3h6v6H3V3zm8 0h6v6h-6V3zM3 11h6v6H3v-6zm8 6v-6h6v6h-6z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`px-3 py-2 text-sm font-medium transition flex items-center gap-1 ${
+                      viewMode === "list"
+                        ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                        : "text-gray-600 hover:bg-gray-50"
+                    }`}
+                    aria-label="Вид списком"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M4 6h12v2H4V6zm0 4h12v2H4v-2zm0 4h12v2H4v-2z" />
+                    </svg>
+                  </button>
+                </div>
                 {activeFiltersCount > 0 && (
                   <button
-                    onClick={() => {
-                      setSelectedCategory("all");
-                      setSelectedTags([]);
-                    }}
+                    onClick={resetAllFilters}
                     className="text-sm text-purple-600 hover:text-purple-700 font-medium"
                   >
                     Сбросить фильтры ({activeFiltersCount})
@@ -260,16 +342,88 @@ export default function CatalogPage() {
               <button
                 key={tag}
                 onClick={() => toggleTag(tag)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
                   selectedTags.includes(tag)
                     ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg"
                     : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
                 }`}
               >
-                #{tag}
+                <span>#{tagLabels[tag] ?? tag}</span>
+                <span className="text-xs opacity-80">{tagUsage[tag] ?? 0}</span>
               </button>
             ))}
           </motion.div>
+
+          {activeFiltersCount > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/70 border border-purple-100 rounded-2xl px-4 py-3 md:px-6 md:py-4 mb-8 flex flex-wrap items-center gap-2 md:gap-3"
+            >
+              <span className="text-xs font-semibold uppercase tracking-wide text-purple-500">
+                Активные фильтры
+              </span>
+              {selectedCategory !== "all" && (
+                <button
+                  onClick={() => setSelectedCategory("all")}
+                  className="flex items-center gap-2 text-sm bg-purple-100 text-purple-700 px-3 py-1.5 rounded-full hover:bg-purple-200 transition"
+                >
+                  Категория: {categories.find((c) => c.id === selectedCategory)?.name}
+                  <span aria-hidden="true">×</span>
+                </button>
+              )}
+              {selectedTags.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => toggleTag(tag)}
+                  className="flex items-center gap-2 text-sm bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-200 transition"
+                >
+                  #{tagLabels[tag] ?? tag}
+                  <span aria-hidden="true">×</span>
+                </button>
+              ))}
+              {searchActive && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="flex items-center gap-2 text-sm bg-blue-100 text-blue-700 px-3 py-1.5 rounded-full hover:bg-blue-200 transition"
+                >
+                  Поиск: “{searchQuery.trim()}”
+                  <span aria-hidden="true">×</span>
+                </button>
+              )}
+              <button
+                onClick={resetAllFilters}
+                className="text-xs font-medium text-purple-600 hover:text-purple-700 ml-auto"
+              >
+                Очистить всё
+              </button>
+            </motion.div>
+          )}
+
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-6">
+            <p className="text-sm text-gray-500">
+              Найдено {filteredProducts.length} из {totalProducts} планеров
+            </p>
+            <div className="flex sm:hidden items-center justify-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-1.5">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`px-2 py-1 text-xs font-medium transition ${
+                  viewMode === "grid" ? "text-purple-600" : "text-gray-500"
+                }`}
+              >
+                Сетка
+              </button>
+              <span className="h-4 w-px bg-gray-200" />
+              <button
+                onClick={() => setViewMode("list")}
+                className={`px-2 py-1 text-xs font-medium transition ${
+                  viewMode === "list" ? "text-purple-600" : "text-gray-500"
+                }`}
+              >
+                Список
+              </button>
+            </div>
+          </div>
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -287,19 +441,18 @@ export default function CatalogPage() {
                   <p className="text-gray-600 mb-6">
                     Попробуйте снять часть фильтров или измените поисковый запрос.
                   </p>
-                  <button
-                    onClick={() => {
-                      setSelectedCategory("all");
-                      setSelectedTags([]);
-                      setSearchQuery("");
-                    }}
-                    className="btn px-6"
-                  >
+                  <button onClick={resetAllFilters} className="btn px-6">
                     Сбросить фильтры
                   </button>
                 </div>
               ) : (
-                <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
+                <div
+                  className={
+                    viewMode === "list"
+                      ? "grid gap-6 grid-cols-1"
+                      : "grid gap-8 sm:grid-cols-2 xl:grid-cols-3"
+                  }
+                >
                   {filteredProducts.map((product, index) => (
                     <ProductCardBalanced
                       key={product.id}
@@ -307,6 +460,7 @@ export default function CatalogPage() {
                       index={index}
                       onQuickView={handleQuickView}
                       onBuyClick={handleBuyClick}
+                      viewMode={viewMode}
                     />
                   ))}
                 </div>

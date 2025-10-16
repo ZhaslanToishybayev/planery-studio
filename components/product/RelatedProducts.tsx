@@ -36,12 +36,12 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
               >
                 <div className="bg-white rounded-2xl border-2 border-gray-200 overflow-hidden hover:border-[var(--brand)] hover:shadow-xl transition-all duration-300">
                   {/* Image */}
-                  <div className="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div className="relative aspect-video bg-white border border-gray-200 overflow-hidden">
                     <Image
                       src={product.gallery[0] || "/assets/catalog/client-portal.png"}
                       alt={`Скриншот ${product.name}`}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
                     {product.isPopular && (

@@ -22,16 +22,16 @@ export default function ProductHero({ product, onBuyClick }: ProductHeroProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-white">
               <Image
                 src={heroImage}
                 alt={`Скриншот шаблона ${product.name}`}
                 fill
                 priority
-                className="object-cover"
+                className="object-contain"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-tr from-black/30 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-black/10 via-transparent to-transparent pointer-events-none" />
             </div>
           </motion.div>
 

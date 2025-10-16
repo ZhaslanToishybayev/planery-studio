@@ -471,26 +471,24 @@ export const freelancerPlanner: Product = {
     {
       title: "Управление проектами",
       description: "Отслеживайте все проекты от заявки до завершения. Статусы, дедлайны, бюджеты.",
-      screenshot: "/assets/placeholder.png",
+      screenshot: "/assets/catalog/freelancer-planner.png",
       icon: "💼"
     },
     {
       title: "База клиентов",
       description: "Храните информацию о клиентах, историю работы и контакты в одном месте.",
-      screenshot: "/assets/placeholder.png",
+      screenshot: "/assets/catalog/freelancer-planner.png",
       icon: "👥"
     },
     {
       title: "Финансовый трекер",
       description: "Отслеживайте доходы, расходы и прибыль. Визуализация финансов по месяцам.",
-      screenshot: "/assets/placeholder.png",
+      screenshot: "/assets/catalog/freelancer-planner.png",
       icon: "💰"
     }
   ],
   gallery: [
-    "/assets/placeholder-1.png",
-    "/assets/placeholder-1.png",
-    "/assets/placeholder-1.png"
+    "/assets/catalog/freelancer-planner.png"
   ],
   included: [
     "Система управления проектами",

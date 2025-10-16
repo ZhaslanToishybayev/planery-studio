@@ -36,15 +36,15 @@ export default function ProductFeaturesList({ features }: ProductFeaturesListPro
                   index % 2 === 0 ? "" : "lg:col-start-2"
                 }`}
               >
-                <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
+                <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-white">
                   <Image
                     src={feature.screenshot || "/assets/catalog/client-portal.png"}
                     alt={`${feature.title} — скриншот`}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     sizes="(max-width: 1024px) 100vw, 50vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-transparent pointer-events-none" />
                 </div>
               </div>
 

@@ -29,7 +29,7 @@ export default function ProductGalleryDetailed({
             {gallery.map((image, index) => (
               <motion.div
                 key={index}
-                className="relative aspect-video rounded-xl overflow-hidden cursor-pointer group"
+                className="relative aspect-video rounded-xl overflow-hidden cursor-pointer group border border-gray-200 bg-white"
                 onClick={() => setSelectedImage(index)}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -42,7 +42,7 @@ export default function ProductGalleryDetailed({
                   src={image || "/assets/catalog/client-portal.png"}
                   alt={`${productName} — скриншот ${index + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                 />
 
@@ -114,13 +114,13 @@ export default function ProductGalleryDetailed({
                 </button>
 
                 {/* Image */}
-                <div className="bg-white rounded-2xl overflow-hidden">
-                  <div className="relative aspect-video">
+                <div className="bg-white rounded-2xl overflow-hidden border border-gray-200">
+                  <div className="relative aspect-video bg-white">
                     <Image
                       src={gallery[selectedImage] || "/assets/catalog/client-portal.png"}
                       alt={`${productName} — крупный план ${selectedImage + 1}`}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                       sizes="(max-width: 1024px) 100vw, 70vw"
                     />
                   </div>

@@ -8,6 +8,7 @@ interface ProductCardBalancedProps {
   index: number;
   onQuickView: (product: Product) => void;
   onBuyClick: (product: Product) => void;
+  viewMode?: "grid" | "list";
 }
 
 export default function ProductCardBalanced({
@@ -15,11 +16,13 @@ export default function ProductCardBalanced({
   index,
   onQuickView,
   onBuyClick,
+  viewMode = "grid",
 }: ProductCardBalancedProps) {
   const priceLabel = `${product.price.toLocaleString("ru-RU")}₸`;
   const originalPriceLabel = product.originalPrice
     ? `${product.originalPrice.toLocaleString("ru-RU")}₸`
     : null;
+  const isList = viewMode === "list";
 
   return (
     <motion.div
@@ -28,29 +31,31 @@ export default function ProductCardBalanced({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.3, delay: index * 0.03 }}
-      className="group"
+      className={`group ${isList ? "md:flex" : ""}`}
     >
       <motion.div
         whileHover={{ y: -12, scale: 1.02 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
-        className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-transparent hover:border-purple-200"
+        className={`bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-transparent hover:border-purple-200 ${
+          isList ? "md:flex md:items-stretch md:w-full" : ""
+        }`}
       >
-        <div className="relative h-64 bg-gradient-to-br from-purple-100 via-pink-100 to-purple-100 overflow-hidden">
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.6 }}
-            className="w-full h-full"
-          >
+        <div
+          className={`relative bg-white border border-purple-100 overflow-hidden ${
+            isList ? "h-56 md:h-auto md:min-h-[16rem] md:w-72" : "h-64"
+          }`}
+        >
+          <div className={`absolute ${isList ? "inset-6" : "inset-4"}`}>
             <Image
               src={product.gallery[0] || "/assets/placeholder.png"}
               alt={product.name}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
-          </motion.div>
+          </div>
 
-          <div className="absolute top-4 left-4 flex flex-col gap-2">
+          <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
             {product.isPopular && (
               <motion.span
                 initial={{ opacity: 0, x: -20 }}
@@ -76,9 +81,10 @@ export default function ProductCardBalanced({
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.03 + 0.2 }}
-                className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md"
+                className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md"
               >
-                -{product.discount}%
+                <span>🎯</span>
+                <span>-{product.discount}%</span>
               </motion.span>
             )}
           </div>
@@ -90,8 +96,8 @@ export default function ProductCardBalanced({
           </div>
         </div>
 
-        <div className="p-6">
-          <h3 className="text-2xl font-bold mb-2 text-gray-900 group-hover:text-purple-600 transition-colors">
+        <div className={`p-6 ${isList ? "md:flex-1 md:pl-6 md:pr-8 md:py-6" : ""}`}>
+          <h3 className="text-2xl font-bold mb-2 text-gray-900 group-hover:text-purple-600 transition-colors line-clamp-2">
             {product.name}
           </h3>
           <p className="text-sm text-purple-600 font-medium mb-3">
@@ -103,7 +109,7 @@ export default function ProductCardBalanced({
 
           <div className="mb-4 space-y-2">
             {product.features.slice(0, 3).map((feature, idx) => (
-              <div key={idx} className="flex items-start gap-2 text-sm">
+              <div key={idx} className="flex items-start gap-2 text-sm text-left">
                 <span className="text-lg">{feature.icon}</span>
                 <span className="text-gray-600 line-clamp-1">
                   {feature.title}
@@ -112,8 +118,8 @@ export default function ProductCardBalanced({
             ))}
           </div>
 
-          <div className="border-t pt-4 mt-4">
-            <div className="flex items-center justify-between mb-4">
+          <div className={`border-t pt-4 mt-4 ${isList ? "md:flex md:items-center md:justify-between" : ""}`}>
+            <div className="flex items-center gap-2 mb-4 md:mb-0">
               <div>
                 {originalPriceLabel && (
                   <span className="text-gray-400 line-through text-sm mr-2">
@@ -126,7 +132,7 @@ export default function ProductCardBalanced({
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className={`flex gap-3 ${isList ? "md:w-auto" : ""}`}>
               <motion.button
                 onClick={() => onQuickView(product)}
                 whileHover={{ scale: 1.05, y: -2 }}

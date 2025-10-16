@@ -53,15 +53,15 @@ export default function QuickViewModal({
     ? `${product.originalPrice.toLocaleString("ru-RU")}₸`
     : null;
 
+  const gallery = product.gallery.length > 0 ? product.gallery : ["/assets/placeholder.png"];
+
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % product.gallery.length);
+    setCurrentImageIndex((prev) => (prev + 1) % gallery.length);
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + product.gallery.length) % product.gallery.length);
+    setCurrentImageIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
   };
-
-  const gallery = product.gallery.length > 0 ? product.gallery : ["/assets/placeholder.png"];
 
   return (
     <AnimatePresence>
@@ -101,40 +101,43 @@ export default function QuickViewModal({
               </motion.button>
 
               <div className="overflow-y-auto max-h-[90vh]">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 p-4 md:p-8">
-                  <div className="w-full">
-                    <div className="relative h-64 sm:h-80 md:h-96 bg-gradient-to-br from-purple-100 via-pink-100 to-purple-100 rounded-2xl overflow-hidden mb-4">
-                      <Image
-                        src={gallery[currentImageIndex]}
-                        alt={product.name}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 p-4 md:p-8">
+                    <div className="w-full">
+                      <div className="relative bg-white border border-purple-100 rounded-2xl mb-4 p-6 sm:p-8 overflow-hidden">
+                        <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+                          {product.isPopular && (
+                            <span className="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                              🔥 Популярный
+                            </span>
+                          )}
+                          {product.isBestSeller && (
+                            <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                              ⭐ Хит продаж
+                            </span>
+                          )}
+                          {product.discount && (
+                            <span className="inline-flex items-center gap-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                              <span>🎯</span>
+                              <span>-{product.discount}%</span>
+                            </span>
+                          )}
+                        </div>
 
-                      <div className="absolute top-4 left-4 flex flex-col gap-2">
-                        {product.isPopular && (
-                          <span className="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                            🔥 Популярный
-                          </span>
-                        )}
-                        {product.isBestSeller && (
-                          <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                            ⭐ Хит продаж
-                          </span>
-                        )}
-                        {product.discount && (
-                          <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                            -{product.discount}%
-                          </span>
-                        )}
+                      <div className="relative w-full aspect-[3/4] sm:aspect-[4/5] md:aspect-[5/6] lg:aspect-[3/4]">
+                        <Image
+                          src={gallery[currentImageIndex]}
+                          alt={product.name}
+                          fill
+                          className="object-contain object-center"
+                          sizes="(max-width: 768px) 90vw, (max-width: 1280px) 45vw, 560px"
+                        />
                       </div>
 
                       {gallery.length > 1 && (
                         <>
                           <button
                             onClick={prevImage}
-                            className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg z-20"
                             aria-label="Предыдущее фото"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,7 +146,7 @@ export default function QuickViewModal({
                           </button>
                           <button
                             onClick={nextImage}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg z-20"
                             aria-label="Следующее фото"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +175,7 @@ export default function QuickViewModal({
                               alt={`${product.name} ${idx + 1}`}
                               width={80}
                               height={80}
-                              className="object-cover w-full h-full"
+                              className="object-contain w-full h-full bg-white"
                             />
                           </button>
                         ))}
