@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import MobileBottomSheet from "./MobileBottomSheet";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -102,46 +103,31 @@ export default function Header() {
       </motion.header>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <>
-            <motion.div
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-            />
-            <motion.div
-              className="fixed top-[73px] left-0 right-0 bg-white border-b border-gray-200 shadow-xl z-40 md:hidden"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
-            >
-              <nav className="container-1200 py-6 flex flex-col gap-4">
-                <div className="text-xl text-gray-700 font-bold py-2">
-                  Преврати хаос в порядок
-                </div>
-                <Link
-                  href="/catalog"
-                  className="text-base font-semibold text-gray-700 hover:text-[var(--brand)] transition"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Каталог шаблонов
-                </Link>
-                <Link
-                  href="#pricing"
-                  className="btn"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Купить
-                </Link>
-              </nav>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <MobileBottomSheet
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        title="Меню"
+      >
+        <nav className="flex flex-col gap-4">
+          <div className="text-xl text-gray-700 font-bold py-2">
+            Преврати хаос в порядок
+          </div>
+          <Link
+            href="/catalog"
+            className="text-base font-semibold text-gray-700 hover:text-[var(--brand)] transition"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Каталог шаблонов
+          </Link>
+          <Link
+            href="#pricing"
+            className="btn"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Купить
+          </Link>
+        </nav>
+      </MobileBottomSheet>
 
       {/* Spacer */}
       <div className="h-[73px]" />

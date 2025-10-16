@@ -383,7 +383,10 @@ body {
 @media (max-width: 768px) {
   /* Touch targets */
   .btn, button, a {
-    min-height: 44px; /* iOS minimum touch target */
+    min-height: 48px; /* iOS minimum touch target */
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    font-size: 1rem;
   }
 
   /* Improved spacing */
@@ -398,7 +401,8 @@ body {
   }
 
   .display-lg {
-    font-size: clamp(1.75rem, 8vw, 2.5rem);
+    font-size: clamp(2rem, 8vw, 2.5rem);
+    line-height: 1.2;
   }
 
   .display-md {
@@ -423,82 +427,6 @@ body {
   /* Optimize blobs for mobile */
   .animate-blob {
     animation: none; /* Reduce motion on mobile */
-  }
-}
-
-/* Tablet optimizations */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .display-xl {
-    font-size: clamp(2.5rem, 7vw, 4rem);
-  }
-
-  .display-lg {
-    font-size: clamp(2rem, 6vw, 3rem);
-  }
-}
-
-/* Ultra-wide screens */
-@media (min-width: 1920px) {
-  .container-1200 {
-    max-width: 1400px;
-  }
-}
-
-/* Improve focus visibility for accessibility */
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 3px solid var(--brand-400);
-  outline-offset: 2px;
-}
-
-/* Smooth Scroll */
-@media (prefers-reduced-motion: no-preference) {
-  :has(:target) {
-    scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
-  }
-}
-
-/* Reduce motion for users who prefer it */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  .animate-blob,
-  .animate-float,
-  .animate-pulse-glow,
-  .gradient-text-animated {
-    animation: none !important;
-  }
-}
-
-/* Mobile Optimizations */
-@media (max-width: 768px) {
-  /* Better spacing on mobile */
-  .container-1200 {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  /* Hero section mobile */
-  .display-lg {
-    font-size: clamp(2rem, 8vw, 2.5rem);
-    line-height: 1.2;
-  }
-
-  /* Better button sizing */
-  .btn {
-    min-height: 48px;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    font-size: 1rem;
   }
 
   /* Improved text readability */
