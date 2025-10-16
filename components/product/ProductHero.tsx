@@ -10,6 +10,7 @@ interface ProductHeroProps {
 
 export default function ProductHero({ product, onBuyClick }: ProductHeroProps) {
   const heroImage = product.gallery[0] ?? "/assets/catalog/client-portal.png";
+  const secondaryImage = product.gallery[1] ?? heroImage;
 
   return (
     <section className="bg-gradient-to-b from-gray-50 to-white border-b border-gray-100">
@@ -22,16 +23,39 @@ export default function ProductHero({ product, onBuyClick }: ProductHeroProps) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-gray-200 bg-white">
-              <Image
-                src={heroImage}
-                alt={`Скриншот шаблона ${product.name}`}
-                fill
-                priority
-                className="object-contain"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-tr from-black/10 via-transparent to-transparent pointer-events-none" />
+            <div className="relative isolate">
+              <div className="absolute -top-10 -left-10 hidden xl:block">
+                <div className="relative h-36 w-28 rounded-3xl overflow-hidden border border-white/60 shadow-xl bg-white/60 backdrop-blur">
+                  <Image
+                    src={secondaryImage}
+                    alt={`${product.name} — дополнительный экран`}
+                    fill
+                    className="object-cover"
+                    sizes="112px"
+                  />
+                </div>
+              </div>
+
+              <div className="relative rounded-[44px] bg-gradient-to-br from-[#7f5af0] via-[#ff8ba7] to-[#ffd803] p-6 sm:p-10 shadow-[0_45px_70px_-40px_rgba(127,90,240,0.65)] overflow-hidden">
+                <div className="absolute inset-0 opacity-15 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.9),_transparent_65%)]" />
+                <div className="absolute inset-0 opacity-25 bg-[linear-gradient(135deg,rgba(255,255,255,0.3)_0%,transparent_45%,transparent_55%,rgba(255,255,255,0.3)_100%)]" />
+
+                <div className="relative rounded-[32px] border border-white/30 bg-white/10 backdrop-blur-sm overflow-hidden">
+                  <div className="relative aspect-[4/5] md:aspect-[3/4]">
+                    <Image
+                      src={heroImage}
+                      alt={`Скриншот шаблона ${product.name}`}
+                      fill
+                      priority
+                      className="object-contain scale-[1.02] md:scale-[1.05]"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
+                  </div>
+
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/15" />
+                  <div className="absolute inset-0 border border-white/10 rounded-[32px] pointer-events-none" />
+                </div>
+              </div>
             </div>
           </motion.div>
 
