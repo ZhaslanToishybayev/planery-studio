@@ -379,6 +379,14 @@ body {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+.before-after-content {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Mobile Optimizations */
 @media (max-width: 768px) {
   /* Touch targets */
