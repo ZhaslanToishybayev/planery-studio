@@ -15,7 +15,8 @@ export interface Product {
   price: number;
   originalPrice?: number;
   discount?: number;
-  
+  hidden?: boolean;
+
   features: ProductFeature[];
   gallery: string[];
   included: string[];
@@ -1174,7 +1175,55 @@ export const studyPlanner: Product = {
 // ============================================
 // УТИЛИТЫ
 // ============================================
-export const allProducts: Product[] = [
+const testPaymentProduct: Product = {
+  id: "prod-test-100",
+  slug: "test-payment-100",
+  name: "Тестовый платёж (100 ₸)",
+  tagline: "Внутренний товар для проверки Robokassa",
+  shortDescription: "Скрытый товар для проверки боевой интеграции Robokassa на минимальной сумме.",
+  fullDescription: `
+Используйте этот товар, чтобы убедиться, что Robokassa, Supabase и рассылка писем работают после переключения в боевой режим.
+  `,
+  price: 100,
+  hidden: true,
+  rating: 5,
+  reviewCount: 0,
+  features: [
+    {
+      title: "Быстрый боевой тест",
+      description: "Пройдите полный поток покупки за пару минут, заплатив всего 100 ₸.",
+      screenshot: "/assets/middle(productivity).png",
+      icon: "🧪"
+    }
+  ],
+  gallery: ["/assets/middle(productivity).png"],
+  included: [
+    "Проверка создания заказа в Supabase",
+    "Письмо с тестовой ссылкой",
+    "Логи вебхука в order_events"
+  ],
+  requirements: "Боевые ключи Robokassa и доступ к корпоративной почте.",
+  deliveryInfo: {
+    title: "Как протестировать",
+    steps: [
+      "Создайте заказ по slug test-payment-100",
+      "Оплатите 100 ₸ через Robokassa",
+      "Убедитесь в статусе PAID и письме"
+    ],
+    timeline: "2 минуты"
+  },
+  tags: ["internal", "test"],
+  faq: [],
+  testimonials: [],
+  relatedProducts: [],
+  seo: {
+    title: "Тестовый платёж Planery Studio",
+    description: "Скрытый товар для проверки боевых платежей Robokassa.",
+    keywords: ["robokassa", "test"]
+  }
+};
+
+const catalogProducts: Product[] = [
   fullBundle,           // популярный bundle
   productivityPlanner,
   studentDashboard,
@@ -1189,20 +1238,25 @@ export const allProducts: Product[] = [
   studyPlanner,
 ];
 
+const internalProducts: Product[] = [testPaymentProduct];
+const productIndex: Product[] = [...catalogProducts, ...internalProducts];
+
+export const allProducts: Product[] = catalogProducts;
+
 export function getProductBySlug(slug: string): Product | undefined {
-  return allProducts.find(p => p.slug === slug);
+  return productIndex.find(p => p.slug === slug);
 }
 
 export function getRelatedProducts(productId: string): Product[] {
-  const product = allProducts.find(p => p.id === productId);
+  const product = catalogProducts.find(p => p.id === productId);
   if (!product || !product.relatedProducts.length) {
-    return allProducts.filter(p => p.id !== productId).slice(0, 2);
+    return catalogProducts.filter(p => p.id !== productId).slice(0, 2);
   }
   return product.relatedProducts
-    .map(id => allProducts.find(p => p.id === id))
+    .map(id => catalogProducts.find(p => p.id === id))
     .filter(Boolean) as Product[];
 }
 
 export function getAllProductSlugs() {
-  return allProducts.map(p => p.slug);
+  return catalogProducts.map(p => p.slug);
 }

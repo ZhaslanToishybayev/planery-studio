@@ -15,6 +15,7 @@ export interface Product {
   price: number;
   originalPrice?: number;
   discount?: number;
+  hidden?: boolean;
   
   features: ProductFeature[];
   gallery: string[];
@@ -1154,7 +1155,73 @@ export const studyPlanner: Product = {
 // ============================================
 // УТИЛИТЫ
 // ============================================
-export const allProducts: Product[] = [
+const testPaymentProduct: Product = {
+  id: "prod-test-100",
+  slug: "test-payment-100",
+  name: "Тестовый платёж (100 ₸)",
+  tagline: "Внутренний товар для проверки Robokassa",
+  shortDescription: "Используйте этот скрытый продукт, чтобы протестировать успешный платёж на 100 тенге после переключения в боевой режим.",
+  fullDescription: `
+Скрытый товар, который позволяет быстро проверить рабочий платёжный поток Robokassa в боевом режиме.
+
+**Когда использовать**
+- Перед релизом, чтобы убедиться, что боевые ключи Robokassa работают;
+- После обновления интеграции, если нужно убедиться в доставке писем и записи в Supabase.
+
+**Что произойдёт после оплаты**
+- Вы попадёте на стандартную страницу успеха;
+- В Supabase создастся заказ на 100 ₸;
+- На email придёт тестовое письмо с доступом к шаблону.
+
+> Товар скрыт из каталога, доступен только по slug \`test-payment-100\`.
+  `,
+  price: 100,
+  hidden: true,
+  rating: 5,
+  reviewCount: 0,
+  features: [
+    {
+      title: "Быстрый платёж на 100 ₸",
+      description: "Позволяет безопасно протестировать Robokassa в боевом режиме с минимальной суммой.",
+      screenshot: "/assets/middle(productivity).png",
+      icon: "🧪",
+    },
+  ],
+  gallery: [
+    "/assets/middle(productivity).png",
+  ],
+  included: [
+    "Проверка записи заказа в Supabase",
+    "Письмо с тестовой ссылкой на шаблон",
+    "Логи Webhook в разделе order_events",
+  ],
+  requirements: "Боевые ключи Robokassa, чтобы провести реальную оплату.",
+  deliveryInfo: {
+    title: "Как проходит проверка",
+    steps: [
+      "Создайте заказ через модалку или POST /api/robokassa/create",
+      "Оплатите 100 ₸ на боевом аккаунте Robokassa",
+      "Проверьте письмо и новые записи в Supabase",
+    ],
+    timeline: "2-3 минуты",
+  },
+  tags: ["internal", "test"],
+  faq: [
+    {
+      question: "Будет ли товар виден покупателям?",
+      answer: "Нет, продукт скрыт из каталогов и карточек. Его slug знают только разработчики.",
+    },
+  ],
+  testimonials: [],
+  relatedProducts: [],
+  seo: {
+    title: "Тестовый платёж Planery Studio",
+    description: "Внутренний товар для проверки боевых оплат Robokassa на сумму 100 тенге.",
+    keywords: ["test", "robokassa", "planery studio"],
+  },
+};
+
+const catalogProducts: Product[] = [
   fullBundle,
   studyPlanner,
   freelancerPlanner,
@@ -1167,20 +1234,26 @@ export const allProducts: Product[] = [
   studentSchoolPlanner,
 ];
 
+const internalProducts: Product[] = [testPaymentProduct];
+
+const productIndex: Product[] = [...catalogProducts, ...internalProducts];
+
+export const allProducts: Product[] = catalogProducts;
+
 export function getProductBySlug(slug: string): Product | undefined {
-  return allProducts.find(p => p.slug === slug);
+  return productIndex.find((p) => p.slug === slug);
 }
 
 export function getRelatedProducts(productId: string): Product[] {
-  const product = allProducts.find(p => p.id === productId);
+  const product = catalogProducts.find((p) => p.id === productId);
   if (!product || !product.relatedProducts.length) {
-    return allProducts.filter(p => p.id !== productId).slice(0, 2);
+    return catalogProducts.filter((p) => p.id !== productId).slice(0, 2);
   }
   return product.relatedProducts
-    .map(id => allProducts.find(p => p.id === id))
+    .map((id) => catalogProducts.find((p) => p.id === id))
     .filter(Boolean) as Product[];
 }
 
 export function getAllProductSlugs() {
-  return allProducts.map(p => p.slug);
+  return catalogProducts.map((p) => p.slug);
 }
