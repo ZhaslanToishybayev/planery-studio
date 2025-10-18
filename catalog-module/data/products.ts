@@ -1179,13 +1179,23 @@ const testPaymentProduct: Product = {
   id: "prod-test-100",
   slug: "test-payment-100",
   name: "Тестовый платёж (100 ₸)",
-  tagline: "Внутренний товар для проверки Robokassa",
-  shortDescription: "Скрытый товар для проверки боевой интеграции Robokassa на минимальной сумме.",
+  tagline: "Боевой тест Robokassa",
+  shortDescription: "Отдельный товар для проверки оплаты на 100 тенге: помогает убедиться, что Robokassa, Supabase и письма работают.",
   fullDescription: `
-Используйте этот товар, чтобы убедиться, что Robokassa, Supabase и рассылка писем работают после переключения в боевой режим.
+Тестовый платёж, который позволяет быстро проверить рабочий поток Robokassa в боевом режиме.
+
+**Когда использовать**
+- Перед релизом, чтобы убедиться, что боевые ключи Robokassa работают;
+- После обновления интеграции, если нужно убедиться в доставке писем и записи в Supabase.
+
+**Что произойдёт после оплаты**
+- Стандартный редирект на /checkout/success;
+- Запись заказа на 100 ₸ в Supabase;
+- Письмо с тестовой ссылкой на материалы.
+
+> Товар предназначен только для команды. После проверки можно отменить заказ или оставить для отчётности.
   `,
   price: 100,
-  hidden: true,
   rating: 5,
   reviewCount: 0,
   features: [
@@ -1212,10 +1222,15 @@ const testPaymentProduct: Product = {
     ],
     timeline: "2 минуты"
   },
-  tags: ["internal", "test"],
-  faq: [],
+  tags: ["internal", "test", "special"],
+  faq: [
+    {
+      question: "Будет ли товар виден покупателям?",
+      answer: "Да, карточка видна в каталоге, но описанием подчёркиваем, что это тестовый платёж только для команды.",
+    },
+  ],
   testimonials: [],
-  relatedProducts: [],
+  relatedProducts: ["prod-001"],
   seo: {
     title: "Тестовый платёж Planery Studio",
     description: "Скрытый товар для проверки боевых платежей Robokassa.",
@@ -1236,27 +1251,25 @@ const catalogProducts: Product[] = [
   paraDashboard,
   projectTracker,
   studyPlanner,
+  testPaymentProduct,
 ];
-
-const internalProducts: Product[] = [testPaymentProduct];
-const productIndex: Product[] = [...catalogProducts, ...internalProducts];
 
 export const allProducts: Product[] = catalogProducts;
 
 export function getProductBySlug(slug: string): Product | undefined {
-  return productIndex.find(p => p.slug === slug);
+  return allProducts.find(p => p.slug === slug);
 }
 
 export function getRelatedProducts(productId: string): Product[] {
-  const product = catalogProducts.find(p => p.id === productId);
+  const product = allProducts.find(p => p.id === productId);
   if (!product || !product.relatedProducts.length) {
-    return catalogProducts.filter(p => p.id !== productId).slice(0, 2);
+    return allProducts.filter(p => p.id !== productId).slice(0, 2);
   }
   return product.relatedProducts
-    .map(id => catalogProducts.find(p => p.id === id))
+    .map(id => allProducts.find(p => p.id === id))
     .filter(Boolean) as Product[];
 }
 
 export function getAllProductSlugs() {
-  return catalogProducts.map(p => p.slug);
+  return allProducts.map(p => p.slug);
 }
