@@ -179,26 +179,6 @@ Robokassa автоматически отправляет POST запрос на
    - **Недостаточно средств**: 4000000000000036
    - **Карта заблокирована**: 4000000000000044
 
-### Боевой тест (100 ₸)
-
-- Скрытый товар со slug `test-payment-100` (цена 100 ₸) добавлен в `data/products.ts`, в каталоге не отображается.
-- Для создания платежа используйте модалку с ручным вводом slug или выполните запрос:
-
-```bash
-curl -X POST https://www.planerystudio.com/api/robokassa/create \
-  -H "Content-Type: application/json" \
-  -d '{
-    "productSlug": "test-payment-100",
-    "email": "you@example.com",
-    "name": "Internal QA"
-  }'
-```
-
-- После оплаты проверьте:
-  - запись в таблице `orders` (сумма 100 ₸);
-  - событие `PAID` в `order_events`;
-  - письмо от Resend на указанный email.
-
 ### Проверка интеграции
 
 ```bash
