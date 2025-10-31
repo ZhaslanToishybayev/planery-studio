@@ -354,7 +354,6 @@ export const fullBundle: Product = {
   `,
   price: 12900,
   originalPrice: 32510,
-  discount: 80,
   isPopular: true,
   isBestSeller: true,
   rating: 5.0,
@@ -382,7 +381,7 @@ export const fullBundle: Product = {
   ],
   
   gallery: [
-    "/assets/catalog/study-planner.png",
+    "/planeryphoto/Полный набор.png",
     "/assets/catalog/client-portal.png",
     "/assets/catalog/missions-tracker.png",
     "/assets/catalog/para-dashboard.png",
